@@ -1,7 +1,7 @@
-package net.foreverdevs.jshs;
+package xyz.dc_stats.jshs;
 
-import net.foreverdevs.utils.io.ClassSeeker;
-import net.foreverdevs.utils.iteration.ArrayUtils;
+import xyz.dc_stats.utils.io.ClassSeeker;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.net.URLClassLoader;
 

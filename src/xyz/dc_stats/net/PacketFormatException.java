@@ -1,4 +1,4 @@
-package net.foreverdevs.net;
+package xyz.dc_stats.net;
 
 public class PacketFormatException extends Exception {
     public PacketFormatException() {

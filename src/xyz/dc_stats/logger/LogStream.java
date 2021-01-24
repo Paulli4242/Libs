@@ -1,4 +1,4 @@
-package net.foreverdevs.logger;
+package xyz.dc_stats.logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;

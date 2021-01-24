@@ -1,11 +1,11 @@
-package net.foreverdevs.database;
+package xyz.dc_stats.database;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import net.foreverdevs.utils.io.ByteUtils;
+import xyz.dc_stats.utils.io.ByteUtils;
 
 public class DataTable {
 	TableConnection data;

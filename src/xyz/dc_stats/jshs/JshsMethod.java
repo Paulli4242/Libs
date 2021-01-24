@@ -1,9 +1,9 @@
-package net.foreverdevs.jshs;
+package xyz.dc_stats.jshs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import net.foreverdevs.utils.iteration.ArrayUtils;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 public class JshsMethod implements JshsItem {
   Object obj;

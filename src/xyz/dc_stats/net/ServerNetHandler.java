@@ -1,4 +1,4 @@
-package net.foreverdevs.net;
+package xyz.dc_stats.net;
 
 import java.io.IOException;
 import java.net.ServerSocket;

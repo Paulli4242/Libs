@@ -1,4 +1,4 @@
-package net.foreverdevs.utils.exceptions;
+package xyz.dc_stats.utils.exceptions;
 
 public class CreationException extends Exception {
 

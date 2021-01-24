@@ -1,4 +1,4 @@
-package net.foreverdevs.utils.io;
+package xyz.dc_stats.utils.io;
 
 import java.io.File;
 import java.io.FileFilter;

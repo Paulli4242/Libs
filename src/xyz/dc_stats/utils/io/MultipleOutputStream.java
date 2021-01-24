@@ -1,6 +1,7 @@
-package net.foreverdevs.utils.io;
+package xyz.dc_stats.utils.io;
 
-import net.foreverdevs.utils.iteration.ArrayUtils;
+
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;

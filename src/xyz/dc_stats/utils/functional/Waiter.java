@@ -1,4 +1,4 @@
-package net.foreverdevs.utils.functional;
+package xyz.dc_stats.utils.functional;
 
 import java.util.function.Consumer;
 

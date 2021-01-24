@@ -1,4 +1,4 @@
-package net.foreverdevs.logger;
+package xyz.dc_stats.logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
-import net.foreverdevs.utils.DateFormat;
+import xyz.dc_stats.utils.DateFormat;
 
 public class TimeLogStream extends LogStream {
 

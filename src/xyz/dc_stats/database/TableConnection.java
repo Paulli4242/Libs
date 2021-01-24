@@ -1,4 +1,4 @@
-package net.foreverdevs.database;
+package xyz.dc_stats.database;
 
 public interface TableConnection {
 	public byte[] getData(int l, int c);

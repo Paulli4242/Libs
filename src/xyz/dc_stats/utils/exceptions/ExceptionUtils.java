@@ -1,7 +1,4 @@
-package net.foreverdevs.utils.exceptions;
-
-
-import net.foreverdevs.utils.functional.Getter;
+package xyz.dc_stats.utils.exceptions;
 
 public final class ExceptionUtils {
     private ExceptionUtils(){

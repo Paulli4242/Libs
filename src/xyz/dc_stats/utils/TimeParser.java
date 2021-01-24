@@ -1,4 +1,4 @@
-package net.foreverdevs.utils;
+package xyz.dc_stats.utils;
 
 public class TimeParser {
     private long miliseconds;

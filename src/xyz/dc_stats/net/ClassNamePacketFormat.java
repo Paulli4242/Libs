@@ -1,7 +1,7 @@
-package net.foreverdevs.net;
+package xyz.dc_stats.net;
 
-import net.foreverdevs.utils.io.ByteUtils;
-import net.foreverdevs.utils.iteration.ArrayUtils;
+import xyz.dc_stats.utils.io.ByteUtils;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -1,11 +1,8 @@
-package net.foreverdevs.utils;
-
-import net.foreverdevs.utils.functional.Getter;
-import net.foreverdevs.utils.iteration.ArrayUtils;
+package xyz.dc_stats.utils;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 
 public class DateFormat {
 	public static final byte YEAR = 0;

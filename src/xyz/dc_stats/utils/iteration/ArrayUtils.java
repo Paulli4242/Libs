@@ -1,5 +1,4 @@
-package net.foreverdevs.utils.iteration;
-
+package xyz.dc_stats.utils.iteration;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Random;

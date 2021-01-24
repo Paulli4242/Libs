@@ -1,4 +1,4 @@
-package net.foreverdevs.utils;
+package xyz.dc_stats.utils;
 
 public final class NumberUtils {
     private NumberUtils(){

@@ -1,4 +1,4 @@
-package net.foreverdevs.utils.exceptions;
+package xyz.dc_stats.utils.exceptions;
 @FunctionalInterface
 public interface ExceptionalGetter<T> {
     public T get()throws Exception;

@@ -1,4 +1,4 @@
-package net.foreverdevs.net;
+package xyz.dc_stats.net;
 
 public interface PacketFormat{
 

@@ -1,4 +1,4 @@
-package net.foreverdevs.jshs;
+package xyz.dc_stats.jshs;
 
 public class JshsValue implements JshsItem{
     Object obj;

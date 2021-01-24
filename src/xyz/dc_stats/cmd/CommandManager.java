@@ -1,10 +1,10 @@
-package net.foreverdevs.cmd;
+package xyz.dc_stats.cmd;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.foreverdevs.logger.Logger;
-import net.foreverdevs.utils.iteration.ArrayUtils;
+import xyz.dc_stats.logger.Logger;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 public class CommandManager {
 	

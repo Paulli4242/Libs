@@ -1,4 +1,4 @@
-package net.foreverdevs.database;
+package xyz.dc_stats.database;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-import net.foreverdevs.utils.io.Savable;
-import net.foreverdevs.utils.io.FileFormatException;
+import xyz.dc_stats.utils.io.Savable;
+import xyz.dc_stats.utils.io.FileFormatException;
 
 public class LDataBase implements IDataBase, Savable {
 	private File dataFolder;

@@ -1,7 +1,7 @@
-package net.foreverdevs.cmd;
+package xyz.dc_stats.cmd;
 
-import net.foreverdevs.logger.LogStream;
-import net.foreverdevs.logger.Logger;
+import xyz.dc_stats.logger.LogStream;
+import xyz.dc_stats.logger.Logger;
 
 public class ConsoleCommandListener extends InputStreamCommandListener {
 

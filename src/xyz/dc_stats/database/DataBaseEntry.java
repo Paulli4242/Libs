@@ -1,6 +1,6 @@
-package net.foreverdevs.database;
+package xyz.dc_stats.database;
 
-import net.foreverdevs.utils.iteration.ArrayUtils;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.io.File;
 import java.util.Arrays;

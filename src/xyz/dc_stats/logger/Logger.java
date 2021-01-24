@@ -1,4 +1,4 @@
-package net.foreverdevs.logger;
+package xyz.dc_stats.logger;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;

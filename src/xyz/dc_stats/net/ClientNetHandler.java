@@ -1,6 +1,6 @@
-package net.foreverdevs.net;
+package xyz.dc_stats.net;
 
-import net.foreverdevs.utils.iteration.ArrayUtils;
+import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.io.IOException;
 import java.net.Socket;

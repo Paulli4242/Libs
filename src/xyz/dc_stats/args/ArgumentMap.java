@@ -1,4 +1,4 @@
-package net.foreverdevs.args;
+package xyz.dc_stats.args;
 
 import java.util.Arrays;
 

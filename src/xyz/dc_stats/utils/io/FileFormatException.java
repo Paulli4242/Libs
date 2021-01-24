@@ -1,4 +1,5 @@
-package net.foreverdevs.utils.io;
+package xyz.dc_stats.utils.io;
+
 
 public class FileFormatException extends Exception{
 

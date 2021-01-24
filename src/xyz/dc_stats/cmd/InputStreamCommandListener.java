@@ -1,4 +1,4 @@
-package net.foreverdevs.cmd;
+package xyz.dc_stats.cmd;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -2,6 +2,7 @@ package xyz.dc_stats.cmd;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import xyz.dc_stats.logger.Logger;
 import xyz.dc_stats.utils.iteration.ArrayUtils;
@@ -19,6 +20,9 @@ public class CommandManager {
 			for(String a:cmd.getAlias())if(a.equalsIgnoreCase(alias))return cmd;
 		}
 		return null;
+	}
+	public List<Command> getCommands(){
+		return list;
 	}
 	public boolean onCommandRecived(CommandSender sender, String args[]) {
 		Logger.getLogger().logDebug("CommdandRecived Sender: %s",sender.getClass().getName());

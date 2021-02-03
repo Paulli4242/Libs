@@ -53,15 +53,15 @@ public class TimeLogStream extends LogStream {
 	}
 	@Override
 	public void print(String s) {
-		super.print(format.format(LocalDateTime.now())+" "+s);
+		super.print(format.formatLocal(LocalDateTime.now())+" "+s);
 	}
 	@Override
 	public PrintStream format(Locale l, String format, Object... args) {
-		return format(l, this.format.format(LocalDateTime.now())+" "+format, args);
+		return format(l, this.format.formatLocal(LocalDateTime.now())+" "+format, args);
 	}
 	@Override
 	public PrintStream format(String format, Object... args) {
-		return super.format(this.format.format(LocalDateTime.now())+" "+format, args);
+		return super.format(this.format.formatLocal(LocalDateTime.now())+" "+format, args);
 	}
 
 	

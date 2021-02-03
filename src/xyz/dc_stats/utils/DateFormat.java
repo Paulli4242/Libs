@@ -1,8 +1,7 @@
 package xyz.dc_stats.utils;
 import xyz.dc_stats.utils.iteration.ArrayUtils;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.*;
 
 public class DateFormat {
 	public static final byte YEAR = 0;
@@ -17,7 +16,8 @@ public class DateFormat {
 
 	private String delimiter = ":";
 	
-	byte[] format = new byte[0];
+	private byte[] format = new byte[0];
+	private ZoneId zone = ZoneOffset.UTC;
 	public DateFormat(byte... u) {
 		add(u);
 	}
@@ -31,11 +31,15 @@ public class DateFormat {
 		this.delimiter = delimiter;
 		return this;
 	}
+	public void setZone(ZoneId zone) {
+		this.zone = zone;
+	}
+
 	public DateFormat clear() {
 		format = new byte[0];
 		return this;
 	}
-	public String format(LocalDateTime time) {
+	public String formatLocal(LocalDateTime time) {
 		String out = "";
 		for(byte b : format)switch (b){
 			case YEAR:
@@ -58,6 +62,9 @@ public class DateFormat {
 				break;
 		}
 		return out.substring(0, out.length()-delimiter.length());
+	}
+	public String formatLocal(long t){
+		return formatLocal(LocalDateTime.from(Instant.ofEpochMilli(t)));
 	}
 	public String format(OffsetDateTime time) {
 		String out = "";
@@ -82,5 +89,8 @@ public class DateFormat {
 				break;
 		}
 		return out.substring(0, out.length()-delimiter.length());
+	}
+	public String format(long t){
+		return format(OffsetDateTime.ofInstant(Instant.ofEpochMilli(t),zone));
 	}
 }

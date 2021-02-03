@@ -17,7 +17,6 @@ public class DateFormat {
 	private String delimiter = ":";
 	
 	private byte[] format = new byte[0];
-	private ZoneId zone = ZoneOffset.UTC;
 	public DateFormat(byte... u) {
 		add(u);
 	}
@@ -30,9 +29,6 @@ public class DateFormat {
 	public DateFormat setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
 		return this;
-	}
-	public void setZone(ZoneId zone) {
-		this.zone = zone;
 	}
 
 	public DateFormat clear() {
@@ -90,7 +86,7 @@ public class DateFormat {
 		}
 		return out.substring(0, out.length()-delimiter.length());
 	}
-	public String format(long t){
+	public String format(long t,ZoneId zone){
 		return format(OffsetDateTime.ofInstant(Instant.ofEpochMilli(t),zone));
 	}
 }

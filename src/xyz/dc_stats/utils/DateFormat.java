@@ -1,4 +1,6 @@
 package xyz.dc_stats.utils;
+
+import xyz.dc_stats.utils.exceptions.DateTimeParseException;
 import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.time.*;
@@ -89,4 +91,52 @@ public class DateFormat {
 	public String format(long t,ZoneId zone){
 		return format(OffsetDateTime.ofInstant(Instant.ofEpochMilli(t),zone));
 	}
+	public OffsetDateTime parse(String s, ZoneOffset zone){
+		int year=1970,month=1,day=1,hour=0,minute=0,second=0;
+		String[] strings = s.split(delimiter);
+		int min = Integer.min(format.length,strings.length);
+		try {
+			for (int i = 0; i < min; i++)
+				switch (format[i]) {
+					case YEAR:
+						year=Integer.parseInt(strings[i]);
+						break;
+					case MONTH:
+						month=Integer.parseInt(strings[i]);
+						break;
+					case DAY:
+						day=Integer.parseInt(strings[i]);
+						break;
+					case HOUR:
+						hour=Integer.parseInt(strings[i]);
+						break;
+					case MINUTE:
+						minute=Integer.parseInt(strings[i]);
+						break;
+					case SECOND:
+						second=Integer.parseInt(strings[i]);
+						break;
+				}
+		}catch(Exception e){
+			throw new DateTimeParseException(e);
+		}
+		try{
+			return OffsetDateTime.of(year,month,day,hour,minute,second,0,zone);
+		}catch (Exception e){
+			throw new DateTimeParseException(e);
+		}
+	}
+	public long parseAsLong(String s,ZoneOffset zone){
+		return parse(s,zone).toInstant().toEpochMilli();
+	}
+
+	public static String formatIsoDateTime(long time, ZoneOffset zone){
+		return DateFormat.ISO_DATE.format(time,zone)+"T"+DateFormat.ISO_TIME.format(time,zone);
+	}
+	public static long parseIsoDateTime(String time, ZoneOffset zone){
+		String[] s = time.split("T");
+		if(s.length!=2)throw new DateTimeParseException("wrong time format");
+		return DateFormat.ISO_DATE.parseAsLong(s[0],zone)+DateFormat.ISO_TIME.parseAsLong(s[1],zone);
+	}
+
 }

@@ -1,4 +1,7 @@
 package xyz.dc_stats.utils.exceptions;
+
+import java.lang.reflect.Constructor;
+
 @FunctionalInterface
 public interface ExceptionalGetter<T> {
     public T get()throws Exception;
@@ -8,5 +11,27 @@ public interface ExceptionalGetter<T> {
         }catch (Exception e){
         }
         return null;
+    }
+    default T asRuntimeException(){
+        try{
+            return get();
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+    default T asRuntimeException(Class<?extends RuntimeException> clazz){
+        try {
+            return get();
+        }catch (Exception exception){
+            RuntimeException e;
+            try{
+                Constructor<?extends RuntimeException> c = clazz.getDeclaredConstructor(Throwable.class);
+                c.setAccessible(true);
+                e = c.newInstance(exception);
+            }catch (Exception ex){
+                throw new RuntimeException(ex);
+            }
+            throw e;
+        }
     }
 }

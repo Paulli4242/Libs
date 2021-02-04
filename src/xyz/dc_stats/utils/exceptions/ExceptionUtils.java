@@ -10,5 +10,16 @@ public final class ExceptionUtils {
     public static void runIE(ExceptionalRunnable run){
         run.ignoreException();
     }
-
+    public static <T> T getAsRE(ExceptionalGetter<T> getter){
+        return getter.asRuntimeException();
+    }
+    public static void runAsRE(ExceptionalRunnable run){
+        run.asRuntimeException();
+    }
+    public static <T> T getAsRE(ExceptionalGetter<T> getter,Class<?extends RuntimeException> ex){
+        return getter.asRuntimeException(ex);
+    }
+    public static void runAsRE(ExceptionalRunnable run,Class<?extends RuntimeException> ex){
+        run.asRuntimeException(ex);
+    }
 }

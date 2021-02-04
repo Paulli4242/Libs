@@ -136,7 +136,7 @@ public class DateFormat {
 	public static long parseIsoDateTime(String time, ZoneOffset zone){
 		String[] s = time.split("T");
 		if(s.length!=2)throw new DateTimeParseException("wrong time format");
-		return DateFormat.ISO_DATE.parseAsLong(s[0],zone)+DateFormat.ISO_TIME.parseAsLong(s[1],zone);
+		return DateFormat.ISO_DATE.parseAsLong(s[0],zone)+DateFormat.ISO_TIME.parseAsLong(s[1],ZoneOffset.UTC);
 	}
 
 }

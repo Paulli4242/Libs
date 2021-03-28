@@ -1,4 +1,4 @@
-package xyz.dc_stats.database;
+package xyz.dc_stats.database.local;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+import xyz.dc_stats.database.DataBaseEntry;
+import xyz.dc_stats.database.IDataBase;
+import xyz.dc_stats.database.statements.SelectStatement;
 import xyz.dc_stats.utils.io.Savable;
 import xyz.dc_stats.utils.io.FileFormatException;
 
@@ -53,8 +56,8 @@ public class LDataBase implements IDataBase, Savable {
 		unregisterTable(table);
 		registerTable(table);
 	}
-	public DataTable getTable(String table) {
-		for(DataBaseEntry e :entrys)if(e.getName().equalsIgnoreCase(table))return new DataTable(e);
+	private DataBaseEntry getTable(String table) {
+		for(DataBaseEntry e :entrys)if(e.getName().equalsIgnoreCase(table))return e;
 		return null;
 	}
 	public void save() {
@@ -137,4 +140,7 @@ public class LDataBase implements IDataBase, Savable {
 		dbe.setData(data);
 	}
 
+	public SelectStatement select() {
+		return null;
+	}
 }

@@ -5,9 +5,9 @@ import xyz.dc_stats.utils.iteration.ArrayUtils;
 import java.io.File;
 import java.util.Arrays;
 
-public class DataBaseEntry implements TableConnection {
-	
-	
+public class DataBaseEntry{
+
+
 	public DataBaseEntry(String name, String filePath) {
 		this.name = name;
 		this.filePath = filePath;
@@ -15,29 +15,12 @@ public class DataBaseEntry implements TableConnection {
 	private String name;
 	private byte[][][] data;
 	private String filePath;
-	
+
 	public String getName() {
 		return name;
 	}
-	public byte[] getData(int l, int c) {
-		if(isValidColumn(l, c))return data[l][c];
-		return null;
-	}
-	@Override
-	public byte[][] getData(int l) {
-		if(isValidLine(l))return data[l];
-		else return null;
-	}
 	public byte[][][] getData() {
 		return data;
-	}
-	@Override
-	public int getColumnCount(int l) {
-		return isValidLine(l)?data[l].length:0;
-	}
-	@Override
-	public int getLineCount() {
-		return data.length;
 	}
 
 	public File getFile() {
@@ -62,22 +45,19 @@ public class DataBaseEntry implements TableConnection {
 		this.data = data;
 	}
 
-	@Override
+
 	public void remove(int l, int c) {
 		if(isValidColumn(l,c))data[l] = ArrayUtils.removeAndShrink(data[l],c);
 	}
 
-	@Override
 	public void remove(int l) {
 		if(isValidLine(l))data = ArrayUtils.removeAndShrink(data,l);
 	}
 
-	@Override
 	public void clear(int l, int c) {
 		if(isValidColumn(l,c))data[l][c]=null;
 	}
 
-	@Override
 	public void clear(int l) {
 		if(isValidLine(l))data[l] = new byte[0][];
 	}

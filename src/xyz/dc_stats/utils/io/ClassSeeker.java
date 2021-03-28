@@ -1,7 +1,7 @@
 package xyz.dc_stats.utils.io;
 
 import xyz.dc_stats.utils.iteration.ArrayUtils;
-import sun.misc.Launcher;
+//import sun.misc.Launcher;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -30,14 +30,14 @@ public class ClassSeeker {
                     e.printStackTrace();
                 }
         }
-        for(URL url : Launcher.getBootstrapClassPath().getURLs())if(url.getPath().endsWith(".jar")) {
+        /*for(URL url : Launcher.getBootstrapClassPath().getURLs())if(url.getPath().endsWith(".jar")) {
             for(String s : seekForClassPaths(url, className))
                 try {
                     classes = ArrayUtils.addAndExpand(classes, ClassLoader.getSystemClassLoader().loadClass(s));
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
-        }
+        }*/
         return classes;
     }
     public String[] seekForClassPaths(URL url, String className) {

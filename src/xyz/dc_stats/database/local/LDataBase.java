@@ -1,21 +1,14 @@
 package xyz.dc_stats.database.local;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import xyz.dc_stats.database.statements.SelectStatement;
+import xyz.dc_stats.utils.io.FileFormatException;
+import xyz.dc_stats.utils.io.Savable;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Predicate;
 
-import xyz.dc_stats.database.DataBaseEntry;
-import xyz.dc_stats.database.IDataBase;
-import xyz.dc_stats.database.statements.SelectStatement;
-import xyz.dc_stats.utils.io.Savable;
-import xyz.dc_stats.utils.io.FileFormatException;
-
-public class LDataBase implements IDataBase, Savable {
+public class LDataBase implements Savable {
 	private File dataFolder;
 	private ArrayList<DataBaseEntry> entrys = new ArrayList<>();
 	public LDataBase(File dataFolder) {
@@ -28,35 +21,13 @@ public class LDataBase implements IDataBase, Savable {
 		for(DataBaseEntry t : entrys)if(t.getName().equalsIgnoreCase(entry))return true;
 		return false;
 	}
-	public boolean registerTable(String table,String filePath) {
+	void registerTable(String table) {
 		if(!isRegistered(table)) {
 			DataBaseEntry dbe;
-			entrys.add((dbe =new DataBaseEntry(table.toLowerCase(), filePath)));
-			load(dbe);
-			return true;
-		}else return false;
+			entrys.add((dbe =new DataBaseEntry(table.toLowerCase())));
+		}
 	}
-	public boolean registerTable(String table) {
-		return registerTable(table, table+".dat");
-	}
-	public boolean unregisterTable(String table){
-		return entrys.removeIf(new Predicate<DataBaseEntry>() {
-
-			@Override
-			public boolean test(DataBaseEntry t) {
-				return t.getName().equalsIgnoreCase(table);
-			}
-		});
-	}
-	public void forceRegisterTable(String table,String filePath) {
-		unregisterTable(table);
-		registerTable(table, filePath);
-	}
-	public void forceRegisterTable(String table) {
-		unregisterTable(table);
-		registerTable(table);
-	}
-	private DataBaseEntry getTable(String table) {
+	DataBaseEntry getTable(String table) {
 		for(DataBaseEntry e :entrys)if(e.getName().equalsIgnoreCase(table))return e;
 		return null;
 	}

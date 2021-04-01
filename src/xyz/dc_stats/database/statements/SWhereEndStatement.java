@@ -7,20 +7,18 @@ import java.util.concurrent.CompletableFuture;
 public class SWhereEndStatement {
 
     private SWhereStatement next;
-    private boolean and;
     private SelectStatement start;
 
     SWhereEndStatement(SelectStatement start){
         this.start = start;
     }
-
     public SWhereStatement and() {
-        and = true;
-        return (next = new SWhereStatement(start));
+        return (next = new SWhereStatement(start,true));
     }
-
     public SWhereStatement or() {
-        and = false;
-        return (next = new SWhereStatement(start));
+        return (next = new SWhereStatement(start,true));
+    }
+    public SWhereStatement next(){
+        return next;
     }
 }

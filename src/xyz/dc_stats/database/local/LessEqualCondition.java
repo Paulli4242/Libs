@@ -2,12 +2,12 @@ package xyz.dc_stats.database.local;
 
 import xyz.dc_stats.database.ByteConvertable;
 
-public class LessCondition extends Condition{
+public class LessEqualCondition extends Condition{
 
     byte[] data;
     boolean negative;
 
-    public LessCondition(boolean and, boolean not, int column, ByteConvertable data) {
+    public LessEqualCondition(boolean and, boolean not, int column, ByteConvertable data) {
         super(and, not, column);
         this.data = data.toByteArray();
         if(this.data.length==0)this.data = new byte[]{0};
@@ -54,6 +54,6 @@ public class LessCondition extends Condition{
                 i++;
             }
         }
-        return false;
+        return true;
     }
 }

@@ -11,8 +11,8 @@ public class CreateStatement {
         this.handler = handler;
     }
 
-    public CreateTableStatement table(String ... columns) {
-        return table = new CreateTableStatement(this,columns);
+    public CreateTableStatement table(String name, String ... columns) {
+        return table = new CreateTableStatement(handler,name,columns);
     }
     void process() {
 

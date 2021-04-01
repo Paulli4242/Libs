@@ -10,12 +10,14 @@ public class SWhereStatement {
     private SWhereEndStatement next;
     private SelectStatement start;
     private boolean not = false;
+    private boolean and;
     private ByteConvertable[] data;
     private String column;
     private Method method;
     
-    SWhereStatement(SelectStatement start){
+    SWhereStatement(SelectStatement start,boolean and){
         this.start = start;
+        this.and = and;
     }
 
     public SWhereStatement not() {
@@ -48,7 +50,7 @@ public class SWhereStatement {
     public SWhereEndStatement lessOrEqual(String column, ByteConvertable data) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
-        method = Method.LESS_OR_EQUALS;
+        method = Method.LESS_OR_EQUAL;
         return (next = new SWhereEndStatement(start));
     }
 
@@ -56,7 +58,7 @@ public class SWhereStatement {
     public SWhereEndStatement greaterOrEqual(String column, ByteConvertable data) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
-        method = Method.GREATER_OR_EQUALS;
+        method = Method.GREATER_OR_EQUAL;
         return (next = new SWhereEndStatement(start));
     }
 
@@ -88,6 +90,11 @@ public class SWhereStatement {
     public boolean isNot() {
         return not;
     }
+
+    public boolean isAnd() {
+        return and;
+    }
+
     public ByteConvertable[] getData() {
         return data;
     }
@@ -105,8 +112,8 @@ public class SWhereStatement {
         EQUAL,
         LESS,
         GREATER,
-        LESS_OR_EQUALS,
-        GREATER_OR_EQUALS,
+        LESS_OR_EQUAL,
+        GREATER_OR_EQUAL,
         NOT_EQUAL,
         BETWEEN,
         IN;

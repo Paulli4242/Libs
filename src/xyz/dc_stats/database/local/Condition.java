@@ -12,7 +12,7 @@ public abstract class Condition {
         this.column = column;
     }
 
-    abstract protected boolean is(byte[] c);
+    abstract public boolean is(byte[] c);
     public final boolean is(boolean b, byte[][] l){
         boolean c = is(l[column]);
         return b&&(c^not)||!and&&((c^not)||b);

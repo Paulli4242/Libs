@@ -22,7 +22,7 @@ public class FromStatement {
         return next;
     }
     public SWhereStatement where() {
-        return (next = new SWhereStatement(start));
+        return (next = new SWhereStatement(start,true));
     }
 
     public CompletableFuture<DBResult> process() {

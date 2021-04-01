@@ -43,7 +43,7 @@ public class Data implements ByteConvertable {
     }
     @Override
     public byte[] toByteArray() {
-        return new byte[0];
+        return data;
     }
 
     public static Data from(byte data){

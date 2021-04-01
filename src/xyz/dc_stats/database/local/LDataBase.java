@@ -1,14 +1,22 @@
 package xyz.dc_stats.database.local;
 
+import xyz.dc_stats.database.DBHandler;
+import xyz.dc_stats.database.DBResult;
+import xyz.dc_stats.database.statements.CreateStatement;
+import xyz.dc_stats.database.statements.SWhereEndStatement;
+import xyz.dc_stats.database.statements.SWhereStatement;
 import xyz.dc_stats.database.statements.SelectStatement;
+import xyz.dc_stats.utils.exceptions.ExceptionUtils;
+import xyz.dc_stats.utils.io.ByteUtils;
 import xyz.dc_stats.utils.io.FileFormatException;
 import xyz.dc_stats.utils.io.Savable;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
-public class LDataBase implements Savable {
+public class LDataBase implements Savable, DBHandler {
 	private File dataFolder;
 	private ArrayList<DataBaseEntry> entrys = new ArrayList<>();
 	public LDataBase(File dataFolder) {
@@ -21,7 +29,7 @@ public class LDataBase implements Savable {
 		for(DataBaseEntry t : entrys)if(t.getName().equalsIgnoreCase(entry))return true;
 		return false;
 	}
-	void registerTable(String table) {
+	void createTable(String table) {
 		if(!isRegistered(table)) {
 			DataBaseEntry dbe;
 			entrys.add((dbe =new DataBaseEntry(table.toLowerCase())));
@@ -110,8 +118,47 @@ public class LDataBase implements Savable {
 		}
 		dbe.setData(data);
 	}
+	@Override
+	public SelectStatement select(String ... columns) {
+		return new SelectStatement(this,columns);
+	}
 
-	public SelectStatement select() {
+	@Override
+	public CreateStatement create() {
+		return new CreateStatement(this);
+	}
+
+	@Override
+	public CompletableFuture<DBResult> process(SelectStatement select) throws IllegalArgumentException {
+		byte[][][] table = ExceptionUtils.getIE(()->getTable(select.next().getTable()).getData());
+		if(table == null)throw  new IllegalArgumentException("Unknown table");
+
+		SWhereStatement where = select.next().next();
+		boolean and = true;
+		ArrayList<Condition> conditions = new ArrayList<>();
+		int column;
+		while(where!=null){
+			column = getColumn(where.getColumn(), table[0]);
+			if(column != -1)switch(where.getMethod()){
+				case EQUAL:
+					conditions.add(new EqualCondition(and, where.isNot(),column,where.getData()[0]));
+					break;
+				case LESS:
+
+					break;
+			}
+		}
+
 		return null;
+	}
+
+	@Override
+	public void process(CreateStatement create) {
+
+	}
+	public static int getColumn(String s,byte[][] b){
+		byte[] b1 = ByteUtils.stringToBytes(s);
+		for(int i = 0; i<b.length;i++)if(Arrays.equals(b[i],b1))return i;
+		return -1;
 	}
 }

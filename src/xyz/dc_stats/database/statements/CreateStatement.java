@@ -1,10 +1,20 @@
 package xyz.dc_stats.database.statements;
 
+import xyz.dc_stats.database.DBHandler;
+
 public class CreateStatement {
-    public CreateTableStatement table(String ... columns){
-        return new CreateTableStatement(this,columns);
+
+    private DBHandler handler;
+    private CreateTableStatement table;
+
+    public CreateStatement(DBHandler handler){
+        this.handler = handler;
     }
-    void process(){
+
+    public CreateTableStatement table(String ... columns) {
+        return table = new CreateTableStatement(this,columns);
+    }
+    void process() {
 
     }
 }

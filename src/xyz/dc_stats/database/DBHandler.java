@@ -7,9 +7,11 @@ import java.util.concurrent.CompletableFuture;
 
 public interface DBHandler {
 
-    SelectStatement select();
+    SelectStatement select(String ... columns);
     CreateStatement create();
 
     CompletableFuture<DBResult> process(SelectStatement select);
+    void process(CreateStatement create);
+
 
 }

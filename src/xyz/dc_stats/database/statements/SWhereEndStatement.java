@@ -6,31 +6,21 @@ import java.util.concurrent.CompletableFuture;
 
 public class SWhereEndStatement {
 
-    SWhereStatement next;
-    EndMethod method = EndMethod.NONE;
-    SelectStatement start;
+    private SWhereStatement next;
+    private boolean and;
+    private SelectStatement start;
+
     SWhereEndStatement(SelectStatement start){
         this.start = start;
     }
 
     public SWhereStatement and() {
-        method = EndMethod.AND;
+        and = true;
         return (next = new SWhereStatement(start));
     }
 
     public SWhereStatement or() {
-        method = EndMethod.OR;
+        and = false;
         return (next = new SWhereStatement(start));
     }
-
-    public CompletableFuture<DBResult> process() {
-        return start.process();
-    }
-
-    enum EndMethod{
-        NONE,
-        AND,
-        OR;
-}
-
 }

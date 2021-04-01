@@ -1,15 +1,18 @@
 package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.ByteConvertable;
+import xyz.dc_stats.database.DBResult;
+
+import java.util.concurrent.CompletableFuture;
 
 public class SWhereStatement {
 
-    SWhereEndStatement next;
-    SelectStatement start;
-    boolean not = false;
-    ByteConvertable[] data;
-    String column;
-    Method method;
+    private SWhereEndStatement next;
+    private SelectStatement start;
+    private boolean not = false;
+    private ByteConvertable[] data;
+    private String column;
+    private Method method;
     
     SWhereStatement(SelectStatement start){
         this.start = start;
@@ -20,10 +23,10 @@ public class SWhereStatement {
         return this;
     }
 
-    public SWhereEndStatement equals(String column, ByteConvertable data) {
+    public SWhereEndStatement equal(String column, ByteConvertable data) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
-        method = Method.EQUALS;
+        method = Method.EQUAL;
         return (next = new SWhereEndStatement(start));
     }
 
@@ -79,8 +82,27 @@ public class SWhereStatement {
         method = Method.IN;
         return (next = new SWhereEndStatement(start));
     }
-    enum Method{
-        EQUALS,
+    public SWhereEndStatement next(){
+        return next;
+    }
+    public boolean isNot() {
+        return not;
+    }
+    public ByteConvertable[] getData() {
+        return data;
+    }
+    public String getColumn() {
+        return column;
+    }
+    public Method getMethod() {
+        return method;
+    }
+
+    public CompletableFuture<DBResult> process() {
+        return start.process();
+    }
+    public enum Method{
+        EQUAL,
         LESS,
         GREATER,
         LESS_OR_EQUALS,

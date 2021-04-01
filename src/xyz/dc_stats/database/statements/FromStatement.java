@@ -6,15 +6,21 @@ import java.util.concurrent.CompletableFuture;
 
 public class FromStatement {
 
-    String[] table;
-    SWhereStatement next;
-    SelectStatement start;
+    private String table;
+    private SWhereStatement next;
+    private SelectStatement start;
 
-    FromStatement(SelectStatement start, String ... table){
+    FromStatement(SelectStatement start, String table){
         this.table = table;
         this.start = start;
     }
 
+    public String getTable() {
+        return table;
+    }
+    public SWhereStatement next(){
+        return next;
+    }
     public SWhereStatement where() {
         return (next = new SWhereStatement(start));
     }

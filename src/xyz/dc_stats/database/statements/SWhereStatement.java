@@ -105,9 +105,6 @@ public class SWhereStatement {
         return method;
     }
 
-    public CompletableFuture<DBResult> process() {
-        return start.process();
-    }
     public enum Method{
         EQUAL,
         LESS,

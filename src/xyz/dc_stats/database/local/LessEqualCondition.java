@@ -49,8 +49,10 @@ public class LessEqualCondition extends Condition{
             }
             diff=-diff;
             while(i<data.length){
-                if(data[i]<c[i+diff])return false;
-                else if(data[i]>c[i+diff])return true;
+                a=Byte.toUnsignedInt(data[i]);
+                b=Byte.toUnsignedInt(c[i]);
+                if(a<b)return false;
+                else if(a>b)return true;
                 i++;
             }
         }

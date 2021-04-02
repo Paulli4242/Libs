@@ -16,9 +16,12 @@ public class SWhereEndStatement {
         return (next = new SWhereStatement(start,true));
     }
     public SWhereStatement or() {
-        return (next = new SWhereStatement(start,true));
+        return (next = new SWhereStatement(start,false));
     }
     public SWhereStatement next(){
         return next;
+    }
+    public CompletableFuture<DBResult> process() {
+        return start.process();
     }
 }

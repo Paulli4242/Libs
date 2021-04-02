@@ -1,6 +1,9 @@
 package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.DBHandler;
+import xyz.dc_stats.utils.Null;
+
+import java.util.concurrent.CompletableFuture;
 
 public class CreateTableStatement {
     String[] columns;
@@ -19,7 +22,7 @@ public class CreateTableStatement {
         return columns;
     }
 
-    public void process(){
-        start.process(this);
+    public CompletableFuture<Null> process(){
+        return start.process(this);
     }
 }

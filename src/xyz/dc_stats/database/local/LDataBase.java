@@ -1,10 +1,12 @@
 package xyz.dc_stats.database.local;
 
+import xyz.dc_stats.database.ByteConvertable;
 import xyz.dc_stats.database.DBHandler;
 import xyz.dc_stats.database.DBResult;
 import xyz.dc_stats.database.Data;
-import xyz.dc_stats.database.exception.UnknownColumnException;
-import xyz.dc_stats.database.exception.UnknownTableException;
+import xyz.dc_stats.database.exception.InvalidRecordException;
+import xyz.dc_stats.database.exception.InvalidColumnException;
+import xyz.dc_stats.database.exception.InvalidTableException;
 import xyz.dc_stats.database.statements.*;
 import xyz.dc_stats.utils.Null;
 import xyz.dc_stats.utils.exceptions.ExceptionUtils;
@@ -31,8 +33,8 @@ public class LDataBase implements Savable, DBHandler {
 		for(DataBaseEntry t : entrys)if(t.getName().equalsIgnoreCase(entry))return true;
 		return false;
 	}
-	void createTable(String table,String[] columns) {
-		if(isRegistered(table)) throw new IllegalArgumentException("Table is exists");
+	void createTable(String table,String[] columns) throws InvalidTableException {
+		if(isRegistered(table)) throw new InvalidTableException("Table already exist.");
 		DataBaseEntry dbe;
 		entrys.add((dbe =new DataBaseEntry(table.toLowerCase())));
 		byte[][][] data = new byte[1][columns.length][];
@@ -134,14 +136,14 @@ public class LDataBase implements Savable, DBHandler {
 
 	@Override
 	public InsertStatement insert() {
-		return new InsertStatement();
+		return new InsertStatement(this);
 	}
 
 	@Override
 	public CompletableFuture<DBResult> process(SelectStatement select){
 		try {
 			byte[][][] table = ExceptionUtils.getIE(() -> getTable(select.next().getTable()).getData());
-			if (table == null) throw new UnknownTableException();
+			if (table == null) throw new InvalidTableException();
 
 			SWhereStatement where = select.next().next();
 			ArrayList<Condition> conditions = new ArrayList<>();
@@ -149,7 +151,7 @@ public class LDataBase implements Savable, DBHandler {
 			while (where != null) {
 				column = getColumn(where.getColumn(), table[0]);
 				if (column == -1)
-					throw new UnknownColumnException(where.getColumn());
+					throw new InvalidColumnException(where.getColumn());
 				switch (where.getMethod()) {
 					case EQUAL:
 						conditions.add(new EqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
@@ -193,7 +195,7 @@ public class LDataBase implements Savable, DBHandler {
 				}
 			}
 			return CompletableFuture.completedFuture(new DBResult(select.getColumns(), result));
-		}catch (UnknownColumnException | UnknownTableException e){
+		}catch (InvalidColumnException | InvalidTableException e){
 			return CompletableFuture.failedFuture(e);
 		}
 	}
@@ -212,11 +214,16 @@ public class LDataBase implements Savable, DBHandler {
 	public CompletableFuture<Null> process(InsertStatement insert) {
 			try {
 				DataBaseEntry entry = getTable(insert.next().getTable());
-				if(entry == null)throw new UnknownTableException();
-				byte[][][] table = entry.getData();
-				getColumns(insert.next().getColumns(), table[0]);
+				if(entry == null)throw new InvalidTableException();
+				int[] columns = getColumns(insert.next().getColumns(), entry.getData()[0]);
+				ByteConvertable[][] values = insert.next().next().getValues();
+				for(ByteConvertable[] v : values)if(v.length!=columns.length)throw new InvalidRecordException();
+				byte[][][] table = new byte[values.length][entry.getData()[0].length][0];
+				for(int i = 0;i<values.length;i++) for(int j = 0;j<columns.length;j++)
+					table[i][columns[j]]=values[i][j].toByteArray();
+				entry.setData(ArrayUtils.addArrayAndExpand(entry.getData(),table));
 				return CompletableFuture.completedFuture(new Null());
-			}catch (UnknownTableException|UnknownColumnException e){
+			}catch (InvalidTableException | InvalidColumnException |InvalidRecordException e){
 				return CompletableFuture.failedFuture(e);
 			}
 	}
@@ -226,11 +233,11 @@ public class LDataBase implements Savable, DBHandler {
 		for(int i = 0; i<b.length;i++)if(Arrays.equals(b[i],b1))return i;
 		return -1;
 	}
-	private static int[] getColumns(String[] s, byte[][] b)throws UnknownColumnException {
+	private static int[] getColumns(String[] s, byte[][] b)throws InvalidColumnException {
 		int[] result = new int[s.length];
 		for(int i = 0;i<s.length;i++) {
 			int c = getColumn(s[i],b);
-			if(c==-1)throw new UnknownColumnException(s[i]);
+			if(c==-1)throw new InvalidColumnException(s[i]);
 				result[i]=c;
 		}
 		return result;

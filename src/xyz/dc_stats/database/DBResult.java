@@ -20,6 +20,9 @@ public class DBResult {
     public boolean isTable(){
         return data.length>1;
     }
+    public Data[][] getTable(){
+        return data;
+    }
 
 
 }

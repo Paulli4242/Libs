@@ -16,6 +16,7 @@ public class GreaterCondition extends Condition{
 
     @Override
     public boolean is(byte[] c) {
+
         if(c.length==0)c = new byte[]{0};
         int a,b,i=0;
         if(negative){
@@ -49,8 +50,10 @@ public class GreaterCondition extends Condition{
             }
             diff=-diff;
             while(i<data.length){
-                if(data[i]<c[i+diff])return true;
-                else if(data[i]>c[i+diff])return false;
+                a=Byte.toUnsignedInt(data[i]);
+                b=Byte.toUnsignedInt(c[i]);
+                if(a<b)return true;
+                else if(a>b)return false;
                 i++;
             }
         }

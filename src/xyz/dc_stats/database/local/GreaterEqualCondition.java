@@ -49,8 +49,10 @@ public class GreaterEqualCondition extends Condition{
             }
             diff=-diff;
             while(i<data.length){
-                if(data[i]<c[i+diff])return true;
-                else if(data[i]>c[i+diff])return false;
+                a=Byte.toUnsignedInt(data[i]);
+                b=Byte.toUnsignedInt(c[i]);
+                if(a<b)return true;
+                else if(a>b)return false;
                 i++;
             }
         }

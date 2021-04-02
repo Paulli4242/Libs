@@ -33,7 +33,7 @@ public class LDataBase implements Savable, DBHandler {
 	}
 	public boolean isRegistered(String entry) {
 		for(DataBaseEntry t : entrys)if(t.getName().equalsIgnoreCase(entry))return true;
-		return false;
+		return new File(dataFolder,entry+".dat").exists();
 	}
 	void createTable(String table,String[] columns) throws InvalidTableException {
 		if(isRegistered(table)) throw new InvalidTableException("Table already exist.");
@@ -42,9 +42,16 @@ public class LDataBase implements Savable, DBHandler {
 		byte[][][] data = new byte[1][columns.length][];
 		for(int i = 0;i<columns.length;i++)data[0][i]=ByteUtils.stringToBytes(columns[i]);
 		dbe.setData(data);
+		save(dbe);
 	}
 	DataBaseEntry getTable(String table) {
-		for(DataBaseEntry e :entrys)if(e.getName().equalsIgnoreCase(table))return e;
+		for(DataBaseEntry e : entrys)if(e.getName().equalsIgnoreCase(table))return e;
+		if(new File(dataFolder,table+".dat").exists()){
+			DataBaseEntry e = new DataBaseEntry(table);
+			entrys.add(e);
+			load(e);
+			return e;
+		}
 		return null;
 	}
 	public void save() {

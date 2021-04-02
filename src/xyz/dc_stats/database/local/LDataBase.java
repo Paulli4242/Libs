@@ -8,6 +8,7 @@ import xyz.dc_stats.database.exception.InvalidRecordException;
 import xyz.dc_stats.database.exception.InvalidColumnException;
 import xyz.dc_stats.database.exception.InvalidTableException;
 import xyz.dc_stats.database.statements.*;
+import xyz.dc_stats.utils.Final;
 import xyz.dc_stats.utils.Null;
 import xyz.dc_stats.utils.exceptions.ExceptionUtils;
 import xyz.dc_stats.utils.io.ByteUtils;
@@ -19,6 +20,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class LDataBase implements Savable, DBHandler {
 	private File dataFolder;
@@ -140,61 +142,28 @@ public class LDataBase implements Savable, DBHandler {
 	}
 
 	@Override
+	public UpdateStatement update(String table, String... columns) {
+		return new UpdateStatement(this,table,columns);
+	}
+
+	@Override
+	public DeleteStatement delete() {
+		return new DeleteStatement(this);
+	}
+
+	@Override
 	public CompletableFuture<DBResult> process(SelectStatement select){
 		try {
 			byte[][][] table = ExceptionUtils.getIE(() -> getTable(select.next().getTable()).getData());
 			if (table == null) throw new InvalidTableException();
-
-			SWhereStatement where = select.next().next();
-			ArrayList<Condition> conditions = new ArrayList<>();
-			int column;
-			while (where != null) {
-				column = getColumn(where.getColumn(), table[0]);
-				if (column == -1)
-					throw new InvalidColumnException(where.getColumn());
-				switch (where.getMethod()) {
-					case EQUAL:
-						conditions.add(new EqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
-						break;
-					case LESS:
-						conditions.add(new LessCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
-						break;
-					case GREATER:
-						conditions.add(new GreaterCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
-						break;
-					case LESS_OR_EQUAL:
-						conditions.add(new LessEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
-						break;
-					case GREATER_OR_EQUAL:
-						conditions.add(new GreaterEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
-						break;
-					case NOT_EQUAL:
-						conditions.add(new NotEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
-						break;
-					case BETWEEN:
-						conditions.add(new BetweenCondition(where.isAnd(), where.isNot(), column, where.getData()[0], where.getData()[1]));
-						break;
-					case IN:
-						conditions.add(new InCondition(where.isAnd(), where.isNot(), column, where.getData()));
-						break;
-				}
-				final SWhereStatement w = where;
-				where = ExceptionUtils.getIE(() -> w.next().next());
-			}
 			int[] columns = getColumns(select.getColumns(), table[0]);
-
-			Data[][] result = new Data[0][];
-			boolean is;
-			for (int i = 1; i < table.length; i++) {
-				is = true;
-				for (Condition c : conditions) is = c.is(is, table[i]);
-				if (is) {
-					Data[] r = new Data[columns.length];
-					for (int z = 0; z < columns.length; z++) r[z] = new Data(table[i][columns[z]]);
-					result = ArrayUtils.addAndExpand(result, r);
-				}
-			}
-			return CompletableFuture.completedFuture(new DBResult(select.getColumns(), result));
+			Final<Data[][]> result = new Final<>(new Data[0][]);
+			forRow(select.next().next(), table,row->{
+				Data[] r = new Data[columns.length];
+				for (int z = 0; z < columns.length; z++) r[z] = new Data(row[columns[z]]);
+				result.set(ArrayUtils.addAndExpand(result.get(), r));
+			});
+			return CompletableFuture.completedFuture(new DBResult(select.getColumns(), result.get()));
 		}catch (InvalidColumnException | InvalidTableException e){
 			return CompletableFuture.failedFuture(e);
 		}
@@ -219,6 +188,7 @@ public class LDataBase implements Savable, DBHandler {
 				ByteConvertable[][] values = insert.next().next().getValues();
 				for(ByteConvertable[] v : values)if(v.length!=columns.length)throw new InvalidRecordException();
 				byte[][][] table = new byte[values.length][entry.getData()[0].length][0];
+
 				for(int i = 0;i<values.length;i++) for(int j = 0;j<columns.length;j++)
 					table[i][columns[j]]=values[i][j].toByteArray();
 				entry.setData(ArrayUtils.addArrayAndExpand(entry.getData(),table));
@@ -226,6 +196,47 @@ public class LDataBase implements Savable, DBHandler {
 			}catch (InvalidTableException | InvalidColumnException |InvalidRecordException e){
 				return CompletableFuture.failedFuture(e);
 			}
+	}
+
+	@Override
+	public CompletableFuture<Null> process(UpdateStatement update) {
+		try {
+			byte[][][] table = ExceptionUtils.getIE(() -> getTable(update.getTable()).getData());
+			if (table == null) throw new InvalidTableException();
+			int[] columns = getColumns(update.getColumns(), table[0]);
+			ByteConvertable[] value = update.next().getData();
+			if(value.length!=columns.length)throw new InvalidRecordException();
+			forRow(update.next().next(), table,row->{
+				for (int i = 0;i<columns.length;i++)row[columns[i]]=value[i].toByteArray();
+			});
+			return CompletableFuture.completedFuture(new Null());
+		}catch (InvalidColumnException | InvalidTableException | InvalidRecordException e){
+			return CompletableFuture.failedFuture(e);
+		}
+	}
+
+	@Override
+	public CompletableFuture<Null> process(DeleteStatement delete) {
+		try {
+			DataBaseEntry entry = getTable(delete.next().getTable());
+			if (entry == null) throw new InvalidTableException();
+			byte[][][] table = entry.getData();
+			ArrayList<Condition> conditions = buildConditions(delete.next().next(),table[0]);
+			boolean is;
+			int i = 1;
+			while ( i < table.length) {
+				is = true;
+				for (Condition c : conditions){
+					is = c.is(is, table[i]);
+				}
+				if (is)table = ArrayUtils.removeAndShrink(table,i);
+				else i++;
+			}
+			entry.setData(table);
+			return CompletableFuture.completedFuture(new Null());
+		}catch (InvalidColumnException | InvalidTableException e){
+			return CompletableFuture.failedFuture(e);
+		}
 	}
 
 	private static int getColumn(String s,byte[][] b){
@@ -241,5 +252,53 @@ public class LDataBase implements Savable, DBHandler {
 				result[i]=c;
 		}
 		return result;
+	}
+	private static ArrayList<Condition> buildConditions(WhereStatement where, byte[][] columns)throws InvalidColumnException{
+		ArrayList<Condition> conditions = new ArrayList<>();
+		int column;
+		while (where != null) {
+			column = getColumn(where.getColumn(), columns);
+			if (column == -1) throw new InvalidColumnException(where.getColumn());
+			switch (where.getMethod()) {
+				case EQUAL:
+					conditions.add(new EqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					break;
+				case LESS:
+					conditions.add(new LessCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					break;
+				case GREATER:
+					conditions.add(new GreaterCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					break;
+				case LESS_OR_EQUAL:
+					conditions.add(new LessEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					break;
+				case GREATER_OR_EQUAL:
+					conditions.add(new GreaterEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					break;
+				case NOT_EQUAL:
+					conditions.add(new NotEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					break;
+				case BETWEEN:
+					conditions.add(new BetweenCondition(where.isAnd(), where.isNot(), column, where.getData()[0], where.getData()[1]));
+					break;
+				case IN:
+					conditions.add(new InCondition(where.isAnd(), where.isNot(), column, where.getData()));
+					break;
+			}
+			final WhereStatement w = where;
+			where = ExceptionUtils.getIE(() -> w.next().next());
+		}
+		return conditions;
+	}
+	private static void forRow(WhereStatement where, byte[][][] table, Consumer<byte[][]> forRow)throws InvalidColumnException{
+		ArrayList<Condition> conditions = buildConditions(where,table[0]);
+		boolean is;
+		for (int i = 1; i < table.length; i++) {
+			is = true;
+			for (Condition c : conditions){
+				is = c.is(is, table[i]);
+			}
+			if (is) forRow.accept(table[i]);
+		}
 	}
 }

@@ -2,13 +2,12 @@ package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.DBHandler;
 import xyz.dc_stats.database.DBResult;
-import xyz.dc_stats.utils.io.ByteUtils;
 
 import java.util.concurrent.CompletableFuture;
 
-public class SelectStatement {
+public class SelectStatement implements ProcessableStatement<DBResult> {
 
-    private FromStatement next;
+    private FromStatement<DBResult> next;
     private DBHandler handler;
     private String[] columns;
 
@@ -20,14 +19,14 @@ public class SelectStatement {
         return columns;
     }
 
-    public FromStatement next() {
+    public FromStatement<DBResult> next() {
         return next;
     }
 
-    public FromStatement from(String table) {
+    public FromStatement<DBResult> from(String table) {
         return (next = new FromStatement(this, table));
     }
-    CompletableFuture<DBResult> process(){
+    public CompletableFuture<DBResult> process(){
         return handler.process(this);
     }
 }

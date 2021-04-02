@@ -1,0 +1,20 @@
+package xyz.dc_stats.utils;
+
+public class Final<T> {
+    private T obj;
+
+    public Final(T obj){
+        this.obj = obj;
+    }
+    public Final(){
+
+    }
+
+    public T get() {
+        return obj;
+    }
+
+    public void set(T obj) {
+        this.obj = obj;
+    }
+}

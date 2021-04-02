@@ -28,6 +28,6 @@ public class SelectStatement {
         return (next = new FromStatement(this, table));
     }
     CompletableFuture<DBResult> process(){
-        return null;
+        return handler.process(this);
     }
 }

@@ -3,10 +3,9 @@ package xyz.dc_stats.database.local;
 import xyz.dc_stats.database.DBHandler;
 import xyz.dc_stats.database.DBResult;
 import xyz.dc_stats.database.Data;
-import xyz.dc_stats.database.statements.CreateStatement;
-import xyz.dc_stats.database.statements.CreateTableStatement;
-import xyz.dc_stats.database.statements.SWhereStatement;
-import xyz.dc_stats.database.statements.SelectStatement;
+import xyz.dc_stats.database.exception.UnknownColumnException;
+import xyz.dc_stats.database.exception.UnknownTableException;
+import xyz.dc_stats.database.statements.*;
 import xyz.dc_stats.utils.Null;
 import xyz.dc_stats.utils.exceptions.ExceptionUtils;
 import xyz.dc_stats.utils.io.ByteUtils;
@@ -134,68 +133,69 @@ public class LDataBase implements Savable, DBHandler {
 	}
 
 	@Override
-	public CompletableFuture<DBResult> process(SelectStatement select){
-		byte[][][] table = ExceptionUtils.getIE(()->getTable(select.next().getTable()).getData());
-		if(table == null)return CompletableFuture.failedFuture(new IllegalArgumentException("Unknown table"));
+	public InsertStatement insert() {
+		return new InsertStatement();
+	}
 
-		SWhereStatement where = select.next().next();
-		ArrayList<Condition> conditions = new ArrayList<>();
-		int column;
-		while(where!=null){
-			column = getColumn(where.getColumn(), table[0]);
-			if(column==-1)return CompletableFuture.failedFuture(new IllegalArgumentException("Unknown column: "+where.getColumn()));
-			switch(where.getMethod()){
-				case EQUAL:
-					conditions.add(new EqualCondition(where.isAnd(), where.isNot(),column,where.getData()[0]));
-					break;
-				case LESS:
-					conditions.add(new LessCondition(where.isAnd(), where.isNot(), column,where.getData()[0]));
-					break;
-				case GREATER:
-					conditions.add(new GreaterCondition(where.isAnd(), where.isNot(), column,where.getData()[0]));
-					break;
-				case LESS_OR_EQUAL:
-					conditions.add(new LessEqualCondition(where.isAnd(), where.isNot(), column,where.getData()[0]));
-					break;
-				case GREATER_OR_EQUAL:
-					conditions.add(new GreaterEqualCondition(where.isAnd(), where.isNot(), column,where.getData()[0]));
-					break;
-				case NOT_EQUAL:
-					conditions.add(new NotEqualCondition(where.isAnd(), where.isNot(), column,where.getData()[0]));
-					break;
-				case BETWEEN:
-					conditions.add(new BetweenCondition(where.isAnd(), where.isNot(),column,where.getData()[0],where.getData()[1]));
-					break;
-				case IN:
-					conditions.add(new InCondition(where.isAnd(), where.isNot(), column,where.getData()));
-					break;
+	@Override
+	public CompletableFuture<DBResult> process(SelectStatement select){
+		try {
+			byte[][][] table = ExceptionUtils.getIE(() -> getTable(select.next().getTable()).getData());
+			if (table == null) throw new UnknownTableException();
+
+			SWhereStatement where = select.next().next();
+			ArrayList<Condition> conditions = new ArrayList<>();
+			int column;
+			while (where != null) {
+				column = getColumn(where.getColumn(), table[0]);
+				if (column == -1)
+					throw new UnknownColumnException(where.getColumn());
+				switch (where.getMethod()) {
+					case EQUAL:
+						conditions.add(new EqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+						break;
+					case LESS:
+						conditions.add(new LessCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+						break;
+					case GREATER:
+						conditions.add(new GreaterCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+						break;
+					case LESS_OR_EQUAL:
+						conditions.add(new LessEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+						break;
+					case GREATER_OR_EQUAL:
+						conditions.add(new GreaterEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+						break;
+					case NOT_EQUAL:
+						conditions.add(new NotEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+						break;
+					case BETWEEN:
+						conditions.add(new BetweenCondition(where.isAnd(), where.isNot(), column, where.getData()[0], where.getData()[1]));
+						break;
+					case IN:
+						conditions.add(new InCondition(where.isAnd(), where.isNot(), column, where.getData()));
+						break;
+				}
+				final SWhereStatement w = where;
+				where = ExceptionUtils.getIE(() -> w.next().next());
 			}
-			final SWhereStatement w = where;
-			where = ExceptionUtils.getIE(()->w.next().next());
-		}
-		String[] strColumns = select.getColumns();
-		int[] columns = new int[strColumns.length];
-		int i = 0;
-		while(i<strColumns.length) {
-			int c = getColumn(strColumns[i],table[0]);
-			if(c==-1)CompletableFuture.failedFuture(new IllegalArgumentException("Unknown column: "+strColumns[i]));
-			else{
-				columns[i]=c;
-				i++;
+			int[] columns = getColumns(select.getColumns(), table[0]);
+
+			Data[][] result = new Data[0][];
+			boolean is;
+			for (int i = 1; i < table.length; i++) {
+				is = true;
+				for (Condition c : conditions) is = c.is(is, table[i]);
+				if (is) {
+					Data[] r = new Data[columns.length];
+					for (int z = 0; z < columns.length; z++) r[z] = new Data(table[i][columns[z]]);
+					result = ArrayUtils.addAndExpand(result, r);
+				}
 			}
+			return CompletableFuture.completedFuture(new DBResult(select.getColumns(), result));
+		}catch (UnknownColumnException | UnknownTableException e){
+			return CompletableFuture.failedFuture(e);
 		}
-		Data[][] result = new Data[0][];
-		boolean is;
-		for(i=1;i<table.length;i++){
-			is=true;
-			for(Condition c : conditions)is = c.is(is,table[i]);
-			if(is){
-				Data[] r = new Data[columns.length];
-				for(int z = 0;z<columns.length;z++)r[z]=new Data(table[i][columns[z]]);
-				result = ArrayUtils.addAndExpand(result,r);
-			}
-		}
-		return CompletableFuture.completedFuture(new DBResult(strColumns,result));
 	}
 
 	@Override
@@ -207,9 +207,32 @@ public class LDataBase implements Savable, DBHandler {
 		}
 		return CompletableFuture.completedFuture(new Null());
 	}
-	public static int getColumn(String s,byte[][] b){
+
+	@Override
+	public CompletableFuture<Null> process(InsertStatement insert) {
+			try {
+				DataBaseEntry entry = getTable(insert.next().getTable());
+				if(entry == null)throw new UnknownTableException();
+				byte[][][] table = entry.getData();
+				getColumns(insert.next().getColumns(), table[0]);
+				return CompletableFuture.completedFuture(new Null());
+			}catch (UnknownTableException|UnknownColumnException e){
+				return CompletableFuture.failedFuture(e);
+			}
+	}
+
+	private static int getColumn(String s,byte[][] b){
 		byte[] b1 = ByteUtils.stringToBytes(s);
 		for(int i = 0; i<b.length;i++)if(Arrays.equals(b[i],b1))return i;
 		return -1;
+	}
+	private static int[] getColumns(String[] s, byte[][] b)throws UnknownColumnException {
+		int[] result = new int[s.length];
+		for(int i = 0;i<s.length;i++) {
+			int c = getColumn(s[i],b);
+			if(c==-1)throw new UnknownColumnException(s[i]);
+				result[i]=c;
+		}
+		return result;
 	}
 }

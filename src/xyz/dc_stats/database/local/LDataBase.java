@@ -9,7 +9,6 @@ import xyz.dc_stats.database.exception.InvalidColumnException;
 import xyz.dc_stats.database.exception.InvalidTableException;
 import xyz.dc_stats.database.statements.*;
 import xyz.dc_stats.utils.Final;
-import xyz.dc_stats.utils.Null;
 import xyz.dc_stats.utils.exceptions.ExceptionUtils;
 import xyz.dc_stats.utils.io.ByteUtils;
 import xyz.dc_stats.utils.io.FileFormatException;
@@ -177,17 +176,17 @@ public class LDataBase implements Savable, DBHandler {
 	}
 
 	@Override
-	public CompletableFuture<Null> process(CreateTableStatement createTable) {
+	public CompletableFuture<Void> process(CreateTableStatement createTable) {
 		try{
 			createTable(createTable.getName(), createTable.getColumns());
 		}catch (Exception e){
 			return CompletableFuture.failedFuture(e);
 		}
-		return CompletableFuture.completedFuture(new Null());
+		return CompletableFuture.completedFuture(null);
 	}
 
 	@Override
-	public CompletableFuture<Null> process(InsertStatement insert) {
+	public CompletableFuture<Void> process(InsertStatement insert) {
 			try {
 				DataBaseEntry entry = getTable(insert.next().getTable());
 				if(entry == null)throw new InvalidTableException();
@@ -199,14 +198,14 @@ public class LDataBase implements Savable, DBHandler {
 				for(int i = 0;i<values.length;i++) for(int j = 0;j<columns.length;j++)
 					table[i][columns[j]]=values[i][j].toByteArray();
 				entry.setData(ArrayUtils.addArrayAndExpand(entry.getData(),table));
-				return CompletableFuture.completedFuture(new Null());
+				return CompletableFuture.completedFuture(null);
 			}catch (InvalidTableException | InvalidColumnException |InvalidRecordException e){
 				return CompletableFuture.failedFuture(e);
 			}
 	}
 
 	@Override
-	public CompletableFuture<Null> process(UpdateStatement update) {
+	public CompletableFuture<Void> process(UpdateStatement update) {
 		try {
 			byte[][][] table = ExceptionUtils.getIE(() -> getTable(update.getTable()).getData());
 			if (table == null) throw new InvalidTableException();
@@ -216,14 +215,14 @@ public class LDataBase implements Savable, DBHandler {
 			forRow(update.next().next(), table,row->{
 				for (int i = 0;i<columns.length;i++)row[columns[i]]=value[i].toByteArray();
 			});
-			return CompletableFuture.completedFuture(new Null());
+			return CompletableFuture.completedFuture(null);
 		}catch (InvalidColumnException | InvalidTableException | InvalidRecordException e){
 			return CompletableFuture.failedFuture(e);
 		}
 	}
 
 	@Override
-	public CompletableFuture<Null> process(DeleteStatement delete) {
+	public CompletableFuture<Void> process(DeleteStatement delete) {
 		try {
 			DataBaseEntry entry = getTable(delete.next().getTable());
 			if (entry == null) throw new InvalidTableException();
@@ -240,7 +239,7 @@ public class LDataBase implements Savable, DBHandler {
 				else i++;
 			}
 			entry.setData(table);
-			return CompletableFuture.completedFuture(new Null());
+			return CompletableFuture.completedFuture(null);
 		}catch (InvalidColumnException | InvalidTableException e){
 			return CompletableFuture.failedFuture(e);
 		}

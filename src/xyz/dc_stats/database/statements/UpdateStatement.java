@@ -2,11 +2,10 @@ package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.ByteConvertable;
 import xyz.dc_stats.database.DBHandler;
-import xyz.dc_stats.utils.Null;
 
 import java.util.concurrent.CompletableFuture;
 
-public class UpdateStatement implements ProcessableStatement<Null> {
+public class UpdateStatement implements ProcessableStatement<Void> {
 
     private String table;
     private String[] columns;
@@ -32,7 +31,7 @@ public class UpdateStatement implements ProcessableStatement<Null> {
     }
 
     @Override
-    public CompletableFuture<Null> process() {
+    public CompletableFuture<Void> process() {
         return handler.process(this);
     }
 }

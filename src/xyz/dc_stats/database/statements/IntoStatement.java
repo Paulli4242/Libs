@@ -1,9 +1,6 @@
 package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.ByteConvertable;
-import xyz.dc_stats.utils.Null;
-
-import java.util.concurrent.CompletableFuture;
 
 public class IntoStatement {
     private String table;

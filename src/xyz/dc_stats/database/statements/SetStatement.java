@@ -1,12 +1,11 @@
 package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.ByteConvertable;
-import xyz.dc_stats.utils.Null;
 
 public class SetStatement {
 
     private ByteConvertable[] data;
-    private WhereStatement<Null> next;
+    private WhereStatement<Void> next;
     private UpdateStatement start;
 
     SetStatement(UpdateStatement start, ByteConvertable[] data){
@@ -18,10 +17,10 @@ public class SetStatement {
         return data;
     }
 
-    public WhereStatement<Null> next(){
+    public WhereStatement<Void> next(){
         return next;
     }
-    public WhereStatement<Null> where() {
+    public WhereStatement<Void> where() {
         return (next = new WhereStatement(start,true));
     }
 }

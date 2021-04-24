@@ -1,7 +1,6 @@
 package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.database.DBHandler;
-import xyz.dc_stats.utils.Null;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,7 +21,7 @@ public class InsertStatement {
         return next;
     }
 
-    public CompletableFuture<Null> process() {
+    public CompletableFuture<Void> process() {
         return handler.process(this);
     }
 }

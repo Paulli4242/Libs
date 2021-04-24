@@ -14,7 +14,4 @@ public class CreateStatement {
     public CreateTableStatement table(String name, String ... columns) {
         return table = new CreateTableStatement(handler,name,columns);
     }
-    void process() {
-
-    }
 }

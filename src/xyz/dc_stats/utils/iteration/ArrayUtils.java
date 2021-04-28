@@ -26,7 +26,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static <T> T[] addAndExpand(T[] arr, T obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -41,7 +41,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static <T> T[] addArrayAndExpand(T[] arr, T[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -69,6 +69,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static <T> T[] shuffleInTo(T[] arr,T obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static <T> T[] shuffleInTo(T[] arr,T obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	//int
 	public static int[] expand(int[] arr, int i){
@@ -80,7 +87,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static int[] addAndExpand(int[] arr, int obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -95,7 +102,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static int[] addArrayAndExpand(int[] arr, int[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -123,7 +130,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
-	
+	public static int[] shuffleInTo(int[] arr,int obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static int[] shuffleInTo(int[] arr,int obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 
 	
 	//long
@@ -136,7 +149,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static long[] addAndExpand(long[] arr, long obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -151,7 +164,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static long[] addArrayAndExpand(long[] arr, long[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -179,6 +192,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static long[] shuffleInTo(long[] arr,long obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static long[] shuffleInTo(long[] arr,long obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	//short
 	public static short[] expand(short[] arr, int i){
@@ -190,7 +210,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static short[] addAndExpand(short[] arr, short obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -205,7 +225,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static short[] addArrayAndExpand(short[] arr, short[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -233,6 +253,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static short[] shuffleInTo(short[] arr,short obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static short[] shuffleInTo(short[] arr,short obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	
 	//byte
@@ -245,7 +272,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static byte[] addAndExpand(byte[] arr, byte obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -260,7 +287,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static byte[] addArrayAndExpand(byte[] arr, byte[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -288,6 +315,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static byte[] shuffleInTo(byte[] arr,byte obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static byte[] shuffleInTo(byte[] arr,byte obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	//double
 	public static double[] expand(double[] arr, int i){
@@ -299,7 +333,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static double[] addAndExpand(double[] arr, double obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -314,7 +348,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static double[] addArrayAndExpand(double[] arr, double[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -342,6 +376,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static double[] shuffleInTo(double[] arr,double obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static double[] shuffleInTo(double[] arr,double obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	//float
 	public static float[] expand(float[] arr, int i){
@@ -353,7 +394,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static float[] addAndExpand(float[] arr, float obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -368,7 +409,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static float[] addArrayAndExpand(float[] arr, float[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -395,7 +436,14 @@ public final class ArrayUtils {
 			arr[ri]=obj;
 		}
 		return arr;
-	}	
+	}
+	public static float[] shuffleInTo(float[] arr,float obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static float[] shuffleInTo(float[] arr,float obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	//char
 	public static char[] expand(char[] arr, int i){
@@ -407,7 +455,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static char[] addAndExpand(char[] arr, char obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -422,7 +470,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static char[] addArrayAndExpand(char[] arr, char[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -450,6 +498,13 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static char[] shuffleInTo(char[] arr,char obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static char[] shuffleInTo(char[] arr,char obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
 	
 	//boolean
 	public static boolean[] expand(boolean[] arr, int i){
@@ -461,7 +516,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static boolean[] addAndExpand(boolean[] arr, boolean obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, 1);
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i-1];
 		arr[index]=obj;
@@ -476,7 +531,7 @@ public final class ArrayUtils {
 		return arr;
 	}
 	public static boolean[] addArrayAndExpand(boolean[] arr, boolean[] obj,int index) {
-		if(index>=arr.length||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
 		arr = expand(arr, obj.length);
 		index+=obj.length-1;
 		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- obj.length];
@@ -504,6 +559,14 @@ public final class ArrayUtils {
 		}
 		return arr;
 	}
+	public static boolean[] shuffleInTo(boolean[] arr,boolean obj) {
+		return addAndExpand(arr,obj, new Random().nextInt(arr.length+1));
+	}
+	public static boolean[] shuffleInTo(boolean[] arr,boolean obj,int from, int to) {
+		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
+		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
+	
 	public static int getDimension(Object array){
 		return getDimension(array.getClass());
 	}

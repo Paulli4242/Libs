@@ -1,6 +1,7 @@
 package xyz.dc_stats.utils.iteration;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Random;
 
 public final class ArrayUtils {
@@ -49,6 +50,23 @@ public final class ArrayUtils {
 		for(int i = 0;i<obj.length;i++)arr[index+i]=obj[i];
 		return arr;
 	}
+	public static <T> T[] addCollectionAndExpand(T[] arr, Collection<?extends T> obj) {
+		int i = arr.length;
+		arr = expand(arr,obj.size());
+		for(T o : obj)arr[i++]=o;
+		return arr;
+	}
+	public static <T> T[] addCollectionAndExpand(T[] arr, Collection<?extends T> obj,int index) {
+		if(index>=arr.length+1||index<0)throw new IllegalArgumentException(index+" isn't in range 0 - "+arr.length+1);
+		int size = obj.size();
+		arr = expand(arr, size);
+		index+= size-1;
+		for(int i = arr.length-1;i>index;i--)arr[i]=arr[i- size];
+		index-= size-1;
+		for(T o:obj)arr[index++]=o;
+		return arr;
+	}
+
 	public static <T> T[] shrink(T[] arr, int i) {
 		return Arrays.copyOf(arr, arr.length-i);
 	}

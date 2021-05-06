@@ -32,6 +32,10 @@ public final class FileUtils {
 			return files;
 		}else return null;
 	}
+	public static void deleteRecursive(File f){
+		if(f.isDirectory())for(File f1 : f.listFiles())deleteRecursive(f1);
+		f.delete();
+	}
 	public static List<File> listAllFiles(File directory, FilenameFilter filter) {
 		if(directory.isDirectory()) {
 			ArrayList<File> files = new ArrayList<>();

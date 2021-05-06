@@ -6,6 +6,7 @@ public class Final<T> {
     public Final(T obj){
         this.obj = obj;
     }
+
     public Final(){
 
     }
@@ -14,7 +15,11 @@ public class Final<T> {
         return obj;
     }
 
-    public void set(T obj) {
+    public Final<T> set(T obj) {
         this.obj = obj;
+        return this;
+    }
+    public boolean isEmpty(){
+        return obj==null;
     }
 }

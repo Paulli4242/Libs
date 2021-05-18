@@ -6,16 +6,27 @@ public final class NumberUtils {
     }
 
     public static <T extends Number> String formatAllDigits(T n){
-        return addMissingDigits(String.valueOf(n), maxLength(n));
+        return addMissingChars(String.valueOf(n), maxLength(n),'0');
     }
 
     public static <T extends Number> String formatAllHexDigits(T n){
-        return addMissingDigits(n instanceof Long ? Long.toHexString(n.longValue()):Integer.toHexString(n.intValue()),maxHexLength(n));
+        return addMissingChars(n instanceof Long ? Long.toHexString(n.longValue()):Integer.toHexString(n.intValue()),maxHexLength(n),'0');
     }
-    public static String addMissingDigits(String n, int maxLength){
-       for(int i = n.length();i<maxLength;i++)n='0'+n;
-       return n;
+
+    public static <T extends Number> String formatAllMissingChars(T n,char c){
+        return addMissingChars(String.valueOf(n), maxLength(n),c);
     }
+
+    public static <T extends Number> String formatAllMissingHexChars(T n,char c){
+        return addMissingChars(n instanceof Long ? Long.toHexString(n.longValue()):Integer.toHexString(n.intValue()),maxHexLength(n),c);
+    }
+
+    public static String addMissingChars(String n, int maxLength, char c){
+        String r = "";
+        for(int i = n.length();i<maxLength;i++)r+=c;
+        return r+n;
+    }
+
 
     public static <T extends Number> int maxLength(T n){
         if(n instanceof Long)return String.valueOf(Long.MAX_VALUE).length();

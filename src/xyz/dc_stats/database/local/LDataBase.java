@@ -1,18 +1,13 @@
 package xyz.dc_stats.database.local;
 
-import xyz.dc_stats.database.ByteConvertable;
-import xyz.dc_stats.database.DBHandler;
-import xyz.dc_stats.database.DBResult;
-import xyz.dc_stats.database.Data;
+import xyz.dc_stats.database.*;
 import xyz.dc_stats.database.exception.InvalidRecordException;
 import xyz.dc_stats.database.exception.InvalidColumnException;
 import xyz.dc_stats.database.exception.InvalidTableException;
 import xyz.dc_stats.database.statements.*;
 import xyz.dc_stats.utils.Final;
 import xyz.dc_stats.utils.exceptions.ExceptionUtils;
-import xyz.dc_stats.utils.io.ByteUtils;
-import xyz.dc_stats.utils.io.FileFormatException;
-import xyz.dc_stats.utils.io.Savable;
+import xyz.dc_stats.utils.io.*;
 import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 import java.io.*;
@@ -58,29 +53,7 @@ public class LDataBase implements Savable, DBHandler {
 	}
 	private void save(DataBaseEntry dbe) {
 		try {
-			File f = dbe.getFile(dataFolder);
-			if(!f.exists()) {
-				f.getParentFile().mkdirs();
-				f.createNewFile();
-			}
-			byte[][][] data = dbe.getData();
-			FileOutputStream out = new FileOutputStream(f);
-			for(int l = 0; l<data.length;l++) {
-				out.write(251);
-				for(int c = 0;c<data[l].length;c++) {
-					if(data[l][c]!=null) {
-						int n;
-						for(n = 0; n<data[l][c].length; n++) {
-							if(n%250==0)out.write((data[l][c].length-n)<250?data[l][c].length-n:250);
-							out.write(data[l][c][n]);
-						}
-						if(data[l][c].length%250==0)out.write(0);
-					}else out.write(0);
-				}
-			}
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			DataLoader.save(dbe.getData(),FileUtils.createNewFileRecursive(dbe.getFile(dataFolder)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,42 +65,12 @@ public class LDataBase implements Savable, DBHandler {
 		for (DataBaseEntry e : entrys)load(e);
 	}
 	private void load(DataBaseEntry dbe) {
-		byte [][][] data = new byte[0][0][];
+		byte[][][] data = new byte[0][0][];
 		try {
-			FileInputStream in = new FileInputStream(dbe.getFile(dataFolder));
-			int bte = in.read();
-			int l=-1,c=-1,i=0;
-			boolean next = false;
-			while(bte != -1) {
-				if(l==-1||c==-1 || i>=data[l][c].length) {
-					if(bte == 251) {
-						l++;
-						c=-1;
-						data = Arrays.copyOf(data, l+1);
-						data[l] = new byte[0][];
-					}
-					else if(l==-1)throw new FileFormatException("missing next line byte");
-					else if(c!=-1&&data[l][c].length!=0&&data[l][c].length%250==0&&!next) {
-						if(bte!=0)data[l][c] = Arrays.copyOf(data[l][c], data[l][c].length+bte);
-						else next = true;
-					}
-					else {
-						next = false;
-						c++;
-						i=0;
-						data[l] = Arrays.copyOf(data[l], c+1);
-						data[l][c]= new byte[bte];
-					}
-				}else {
-					data[l][c][i] = (byte) bte;
-					i++;
-				}
-				bte = in.read();
-			}
+			data=DataLoader.load(dbe.getFile(dataFolder));
 		} catch (FileNotFoundException e) {
+			dbe.setData(new byte[0][0][]);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FileFormatException e) {
 			e.printStackTrace();
 		}
 		dbe.setData(data);

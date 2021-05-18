@@ -1,5 +1,7 @@
 package xyz.dc_stats.database;
 
+import xyz.dc_stats.utils.io.Data;
+
 public class DBResult {
 
     private String[] columns;

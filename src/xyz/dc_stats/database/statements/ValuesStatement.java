@@ -1,6 +1,6 @@
 package xyz.dc_stats.database.statements;
 
-import xyz.dc_stats.database.ByteConvertable;
+import xyz.dc_stats.utils.io.ByteConvertable;
 
 import java.util.concurrent.CompletableFuture;
 

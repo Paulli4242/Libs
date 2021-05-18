@@ -7,6 +7,10 @@ public final class ExceptionUtils {
     public static <T> T getIE(ExceptionalGetter<T> getter){
         return getter.ignoreException();
     }
+    public static <T> T getIE(ExceptionalGetter<T> getter, T def){
+        T  t = getter.ignoreException();
+        return t==null?def:t;
+    }
     public static void runIE(ExceptionalRunnable run){
         run.ignoreException();
     }

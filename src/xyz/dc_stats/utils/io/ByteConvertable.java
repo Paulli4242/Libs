@@ -1,4 +1,4 @@
-package xyz.dc_stats.database;
+package xyz.dc_stats.utils.io;
 
 public interface ByteConvertable {
 	

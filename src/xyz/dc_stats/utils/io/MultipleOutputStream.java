@@ -15,11 +15,11 @@ public class MultipleOutputStream extends OutputStream {
 	}
 	
 	public void addStreams(OutputStream...streams) {
-		int ol = this.streams.length;
-		streams = ArrayUtils.expand(this.streams,streams.length);
-		for(int i = 0;i<streams.length;i++)this.streams[ol+i] = streams[i];
+		this.streams = ArrayUtils.addArrayAndExpand(this.streams,streams);
 	}
-	
+	public void addStream(OutputStream stream){
+		streams = ArrayUtils.addAndExpand(streams,stream);
+	}
 	@Override
 	public void write(int b) throws IOException {
 		for(OutputStream s : streams)s.write(b);

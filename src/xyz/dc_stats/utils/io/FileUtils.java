@@ -63,5 +63,20 @@ public final class FileUtils {
 	public static File createNewFile(String parent, String child) throws IOException {
 		return createNewFile(new File(parent,child));
 	}
+
+	public static File createNewFileRecursive(File file) throws IOException {
+		file.getParentFile().mkdirs();
+		file.createNewFile();
+		return file;
+	}
+	public static File createNewFileRecursive(URI uri) throws IOException {
+		return createNewFileRecursive(new File(uri));
+	}
+	public static File createNewFileRecursive(File parent, String child) throws IOException {
+		return createNewFileRecursive(new File(parent,child));
+	}
+	public static File createNewFileRecursive(String parent, String child) throws IOException {
+		return createNewFileRecursive(new File(parent,child));
+	}
 	
 }

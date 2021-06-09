@@ -1,5 +1,6 @@
 package xyz.dc_stats.utils.iteration;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -94,6 +95,15 @@ public final class ArrayUtils {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
 	}
+	public static <T> T[] invert(T[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			T o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
+	}
 	
 	//int
 	public static int[] expand(int[] arr, int i){
@@ -155,7 +165,15 @@ public final class ArrayUtils {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
 	}
-
+	public static int[] invert(int[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			int o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
+	}
 	
 	//long
 	public static long[] expand(long[] arr, int i){
@@ -217,6 +235,15 @@ public final class ArrayUtils {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
 	}
+	public static long[] invert(long[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			long o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
+	}
 	
 	//short
 	public static short[] expand(short[] arr, int i){
@@ -277,6 +304,15 @@ public final class ArrayUtils {
 	public static short[] shuffleInTo(short[] arr,short obj,int from, int to) {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
+	public static short[] invert(short[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			short o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
 	}
 	
 	
@@ -340,6 +376,15 @@ public final class ArrayUtils {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
 	}
+	public static byte[] invert(byte[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			byte o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
+	}
 	
 	//double
 	public static double[] expand(double[] arr, int i){
@@ -400,6 +445,15 @@ public final class ArrayUtils {
 	public static double[] shuffleInTo(double[] arr,double obj,int from, int to) {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
+	public static double[] invert(double[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			double o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
 	}
 	
 	//float
@@ -462,6 +516,15 @@ public final class ArrayUtils {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
 	}
+	public static float[] invert(float[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			float o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
+	}
 	
 	//char
 	public static char[] expand(char[] arr, int i){
@@ -523,6 +586,15 @@ public final class ArrayUtils {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
 	}
+	public static char[] invert(char[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			char o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
+	}
 	
 	//boolean
 	public static boolean[] expand(boolean[] arr, int i){
@@ -583,6 +655,15 @@ public final class ArrayUtils {
 	public static boolean[] shuffleInTo(boolean[] arr,boolean obj,int from, int to) {
 		if(to>arr.length+1||to<=from)throw new IllegalArgumentException("Invalid range");
 		return addAndExpand(arr,obj, new Random().nextInt(to-from)+from);
+	}
+	public static boolean[] invert(boolean[] arr){
+		int i = arr.length/2;
+		while(i>0){
+			boolean o = arr[arr.length-i];
+			arr[arr.length-i]=arr[--i];
+			arr[i]=o;
+		}
+		return arr;
 	}
 	
 	public static int getDimension(Object array){

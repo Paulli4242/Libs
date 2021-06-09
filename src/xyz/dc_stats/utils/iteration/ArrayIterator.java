@@ -1,5 +1,6 @@
 package xyz.dc_stats.utils.iteration;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class ArrayIterator<T> implements Iteration {
@@ -24,5 +25,12 @@ public class ArrayIterator<T> implements Iteration {
     @Override
     public Iterator iterator() {
         return this;
+    }
+
+    public static <T> Iteration<T> iteration(T... arr){
+        return new ArrayIterator(arr);
+    }
+    public static <T> Iterator<T> iterator(T...arr){
+        return new ArrayIterator(arr);
     }
 }

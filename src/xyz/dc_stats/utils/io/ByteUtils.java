@@ -33,17 +33,18 @@ public final class ByteUtils {
 		byte[] i = numberToBytes((int)c);
 		return Arrays.copyOfRange(i, 2, 4);
 	}
-	public static byte[] stringToBytes(String s) {
-		if(s==null)return new byte[0];
-		char[] ch = s.toCharArray();
+	public static byte[] charArrayToBytes(char[] ch){
 		byte[] bytes = new byte[ch.length*2];
 		for(int i = 0;i<ch.length;i++) {
 			byte[] b = charToBytes(ch[i]);
 			bytes[i*2]=b[0];
 			bytes[i*2+1]=b[1];
-			
 		}
 		return bytes;
+	}
+	public static byte[] stringToBytes(String s) {
+		if(s==null)return new byte[0];
+		return charArrayToBytes(s.toCharArray());
 	}
 	public static byte[] boolToBytes(boolean b){
 		return new byte[]{(byte) (b?1:0)};
@@ -73,7 +74,7 @@ public final class ByteUtils {
 	public static char bytesToChar(byte[] bytes) {
 		return (char) bytesToInt(new byte[] {0,0,bytes[0],bytes[1]});
 	}
-	public static String bytesToString(byte[] bytes) {
+	public static char[] bytesToCharArray(byte[] bytes){
 		if(bytes==null)return null;
 		char[]ch = new char[bytes.length/2];
 		byte[] b = new byte[2];
@@ -82,7 +83,10 @@ public final class ByteUtils {
 			b[1]=bytes[i*2+1];
 			ch[i] = ByteUtils.bytesToChar(b);
 		}
-		return new String(ch);
+		return ch;
+	}
+	public static String bytesToString(byte[] bytes) {
+		return new String(bytesToCharArray(bytes));
 	}
 	public static boolean bytesToBoolean(byte[] bytes){
 		return bytes[0]==1;

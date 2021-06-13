@@ -1,11 +1,13 @@
 package xyz.dc_stats.database.local;
 
 import xyz.dc_stats.database.*;
+import xyz.dc_stats.database.comparison.Comparator;
 import xyz.dc_stats.database.exception.InvalidRecordException;
 import xyz.dc_stats.database.exception.InvalidColumnException;
 import xyz.dc_stats.database.exception.InvalidTableException;
 import xyz.dc_stats.database.statements.*;
 import xyz.dc_stats.utils.Final;
+import xyz.dc_stats.utils.FinalInt;
 import xyz.dc_stats.utils.exceptions.ExceptionUtils;
 import xyz.dc_stats.utils.io.*;
 import xyz.dc_stats.utils.iteration.ArrayUtils;
@@ -36,7 +38,6 @@ public class LDataBase implements Savable, DBHandler {
 		byte[][][] data = new byte[1][columns.length][];
 		for(int i = 0;i<columns.length;i++)data[0][i]=ByteUtils.stringToBytes(columns[i]);
 		dbe.setData(data);
-		save(dbe);
 	}
 	DataBaseEntry getTable(String table) {
 		for(DataBaseEntry e : entrys)if(e.getName().equalsIgnoreCase(table))return e;
@@ -103,21 +104,66 @@ public class LDataBase implements Savable, DBHandler {
 	@Override
 	public CompletableFuture<DBResult> process(SelectStatement select){
 		try {
-			byte[][][] table = ExceptionUtils.getIE(() -> getTable(select.next().getTable()).getData());
-			if (table == null) throw new InvalidTableException();
-			int[] columns = getColumns(select.getColumns(), table[0]);
-			Final<Data[][]> result = new Final<>(new Data[0][]);
-			forRow(select.next().next(), table,row->{
-				Data[] r = new Data[columns.length];
-				for (int z = 0; z < columns.length; z++) r[z] = new Data(row[columns[z]]);
-				result.set(ArrayUtils.addAndExpand(result.get(), r));
-			});
-			return CompletableFuture.completedFuture(new DBResult(select.getColumns(), result.get()));
+			Table[] table = new Table[]{ExceptionUtils.getIE(() -> getTable(select.next().getTable()))};
+			if (table[0] == null) throw new InvalidTableException(select.next().getTable());
+			Final<JoinableStatement<DBResult>> joinable = new Final<>(select.next());
+			Final<WhereStatement<DBResult>> where = new Final<>();
+			OrderByStatement<DBResult> orderBy = null;
+			JoinStatement[] joins = new JoinStatement[0];
+			do{
+				if(joinable.get().next() instanceof JoinStatement){
+					joinable.set((JoinableStatement<DBResult>) joinable.get().next());
+					Table t = ExceptionUtils.getIE(()->getTable(joinable.get().getTable()));
+					if(t==null)throw new InvalidTableException(joinable.get().getTable());
+					table=ArrayUtils.addAndExpand(table,t);
+					joins=ArrayUtils.addAndExpand(joins,(JoinStatement)joinable.get());
+				}else if(joinable.get().next() instanceof OrderByStatement){
+					orderBy = (OrderByStatement<DBResult>) joinable.get().next();
+					break;
+				} else{
+					where.set((WhereStatement<DBResult>) joinable.get().next());
+					break;
+				}
+			}while (true);
+			int[][] columns = getColumns(select.getColumns(), table);
+			ArrayList<Condition>[] conditions = buildConditions(where.get(),table);
+			for(int i = 0; i < table.length;i++){
+				SimpleTable st = new SimpleTable(table[i].getName(),new byte[][][]{table[i].getData()[0]});
+				forRow(conditions[i], table[i].getData(),row->st.addLine(row));
+				table[i]=st;
+			}
+			table = join(table,joins);
+			while (orderBy==null&&!where.isEmpty()){
+				AfterWhereEndStatement s = ExceptionUtils.getIE(()-> where.get().next().next());
+				if(s instanceof OrderByStatement)orderBy = (OrderByStatement)s;
+				else where.set((WhereStatement<DBResult>) s);
+			}
+			if(orderBy!=null){
+				Comparator comp = orderBy.getComparator();
+				boolean asc = orderBy.isAscending();
+				int[] c = getColumn(orderBy.getColumn(),table);
+				byte[][] b;
+				for(int i = 1;i+1<table[0].getData().length;i++){
+					int x = i;
+					for(int j = i+1;j<table[0].getData().length;j++)
+						if (asc && comp.less(table[c[0]].getData()[j][c[1]], table[c[0]].getData()[x][c[1]]) ||
+								!asc && comp.greater(table[c[0]].getData()[j][c[1]], table[c[0]].getData()[x][c[1]]))x=j;
+					for (Table t : table) {
+						b = t.getData()[x];
+						t.getData()[x] = t.getData()[i];
+						t.getData()[i] = b;
+					}
+				}
+			}
+			Data[][] result = new Data[table[0].getData().length-1][columns.length];
+			for(int i = 0;i<result.length;i++)
+				for(int j = 0;j<columns.length;j++)
+					result[i][j] = new Data(table[columns[j][0]].getData()[i+1][columns[j][1]]);
+			return CompletableFuture.completedFuture(new DBResult(select.getColumns(), result));
 		}catch (InvalidColumnException | InvalidTableException e){
 			return CompletableFuture.failedFuture(e);
 		}
 	}
-
 	@Override
 	public CompletableFuture<Void> process(CreateTableStatement createTable) {
 		try{
@@ -150,12 +196,12 @@ public class LDataBase implements Savable, DBHandler {
 	@Override
 	public CompletableFuture<Void> process(UpdateStatement update) {
 		try {
-			byte[][][] table = ExceptionUtils.getIE(() -> getTable(update.getTable()).getData());
+			Table table = ExceptionUtils.getIE(() -> getTable(update.getTable()));
 			if (table == null) throw new InvalidTableException();
-			int[] columns = getColumns(update.getColumns(), table[0]);
+			int[] columns = getColumns(update.getColumns(), table.getData()[0]);
 			ByteConvertable[] value = update.next().getData();
 			if(value.length!=columns.length)throw new InvalidRecordException();
-			forRow(update.next().next(), table,row->{
+			forRow(buildConditions(update.next().next(),new Table[]{table})[0], table.getData(),row->{
 				for (int i = 0;i<columns.length;i++)row[columns[i]]=value[i].toByteArray();
 			});
 			return CompletableFuture.completedFuture(null);
@@ -170,12 +216,12 @@ public class LDataBase implements Savable, DBHandler {
 			DataBaseEntry entry = getTable(delete.next().getTable());
 			if (entry == null) throw new InvalidTableException();
 			byte[][][] table = entry.getData();
-			ArrayList<Condition> conditions = buildConditions(delete.next().next(),table[0]);
+			ArrayList<Condition>[] conditions = buildConditions(delete.next().next(),new Table[]{entry});
 			boolean is;
 			int i = 1;
 			while ( i < table.length) {
 				is = true;
-				for (Condition c : conditions){
+				for (Condition c : conditions[0]){
 					is = c.is(is, table[i]);
 				}
 				if (is)table = ArrayUtils.removeAndShrink(table,i);
@@ -189,9 +235,29 @@ public class LDataBase implements Savable, DBHandler {
 	}
 
 	private static int getColumn(String s,byte[][] b){
-		byte[] b1 = ByteUtils.stringToBytes(s);
-		for(int i = 0; i<b.length;i++)if(Arrays.equals(b[i],b1))return i;
+		int i = s.indexOf('.');
+		byte[] b1 = ByteUtils.stringToBytes(i>-1&&++i<s.length()?s.substring(i):s);
+		for( i = 0; i<b.length;i++)if(Arrays.equals(b[i],b1))return i;
 		return -1;
+	}
+	private static int[] getColumn(String s, Table... tables) throws InvalidColumnException {
+		int[] out = null;
+		int x = s.indexOf('.');
+		if(x>-1){
+			String table = s.substring(0,x);
+			for(int j = 0; j < tables.length; j++)if(tables[j].getName().equals(table)){
+				out = new int[]{j,getColumn(s,tables[j].getData()[0])};
+				break;
+			}
+		}else{
+			int c;
+			for(FinalInt j = new FinalInt(0); j.get() < tables.length;j.inc())if((c=ExceptionUtils.getIE(()->getColumn(s,tables[j.get()].getData()[0]),-1))!=-1){
+				out = new int[]{j.get(),c};
+				break;
+			}
+		}
+		if(out==null)throw new InvalidColumnException(s);
+		return out;
 	}
 	private static int[] getColumns(String[] s, byte[][] b)throws InvalidColumnException {
 		int[] result = new int[s.length];
@@ -202,45 +268,135 @@ public class LDataBase implements Savable, DBHandler {
 		}
 		return result;
 	}
-	private static ArrayList<Condition> buildConditions(WhereStatement where, byte[][] columns)throws InvalidColumnException{
-		ArrayList<Condition> conditions = new ArrayList<>();
-		int column;
+	private static int[][] getColumns(String[] s, Table[] tables)throws InvalidColumnException{
+		int[][] out = new int[s.length][];
+		for(int i = 0;i<s.length;i++)
+			out[i]=getColumn(s[i],tables);
+		return out;
+	}
+	private static ArrayList<Condition>[] buildConditions(WhereStatement where, Table[] table)throws InvalidColumnException{
+		ArrayList<Condition>[] conditions = new ArrayList[table.length];
+		for (int i = 0; i<conditions.length;i++) conditions[i] = new ArrayList<>();
+		int column[];
+
 		while (where != null) {
-			column = getColumn(where.getColumn(), columns);
-			if (column == -1) throw new InvalidColumnException(where.getColumn());
+			column = getColumn(where.getColumn(),table);
 			switch (where.getMethod()) {
 				case EQUAL:
-					conditions.add(new EqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					conditions[column[0]].add(new EqualCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0]));
 					break;
 				case LESS:
-					conditions.add(new LessCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					conditions[column[0]].add(new LessCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0], where.getComparator()));
 					break;
 				case GREATER:
-					conditions.add(new GreaterCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					conditions[column[0]].add(new GreaterCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0], where.getComparator()));
 					break;
 				case LESS_OR_EQUAL:
-					conditions.add(new LessEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					conditions[column[0]].add(new LessEqualCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0], where.getComparator()));
 					break;
 				case GREATER_OR_EQUAL:
-					conditions.add(new GreaterEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					conditions[column[0]].add(new GreaterEqualCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0], where.getComparator()));
 					break;
 				case NOT_EQUAL:
-					conditions.add(new NotEqualCondition(where.isAnd(), where.isNot(), column, where.getData()[0]));
+					conditions[column[0]].add(new NotEqualCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0]));
 					break;
 				case BETWEEN:
-					conditions.add(new BetweenCondition(where.isAnd(), where.isNot(), column, where.getData()[0], where.getData()[1]));
+					conditions[column[0]].add(new BetweenCondition(where.isAnd(), where.isNot(), column[1], where.getData()[0], where.getData()[1],where.getComparator()));
 					break;
 				case IN:
-					conditions.add(new InCondition(where.isAnd(), where.isNot(), column, where.getData()));
+					conditions[column[0]].add(new InCondition(where.isAnd(), where.isNot(), column[1], where.getData()));
 					break;
 			}
-			final WhereStatement w = where;
-			where = ExceptionUtils.getIE(() -> w.next().next());
+			WhereStatement w = where;
+			where = ExceptionUtils.getIE(() -> (WhereStatement)w.next().next());
 		}
 		return conditions;
 	}
-	private static void forRow(WhereStatement where, byte[][][] table, Consumer<byte[][]> forRow)throws InvalidColumnException{
-		ArrayList<Condition> conditions = buildConditions(where,table[0]);
+
+	private static Table[] join(Table[] table, JoinStatement[] join) throws InvalidColumnException {
+		for(int i = 0;i<join.length;i++){
+			int[] c1 = getColumn(join[i].getColumn1(),table);
+			int[] c2 = getColumn(join[i].getColumn2(),table);
+			if(c1[0]==c2[0])throw new InvalidColumnException(join[i].getColumn1()+" and "+join[i].getColumn2()+" can not be the same.");
+			if(c1[0]==i+1){
+				int[] c = c1;
+				c1=c2;
+				c2=c;
+			}else if(c2[0]!=i+1) throw new InvalidColumnException(join[i-1].getColumn1()+" or "+join[i-1].getColumn2()+" hast to be from joined table");
+			Table[] t = Arrays.copyOf(table,i+2);
+			for(int j = 0;j<t.length;j++)
+				table[j]=new SimpleTable(table[j].getName(),new byte[][][]{table[j].getData()[0]});
+			byte[][][] b1 = t[c1[0]].getData();
+			byte[][][] b2 = t[c2[0]].getData();
+			boolean add;
+			boolean[] add2;
+			switch(join[i].getType()){
+				case INNER:
+					for(int l1 = 1; l1< b1.length;l1++){
+						System.out.println(l1);
+						for(int l2 = 1; l2<b2.length;l2++)
+							if(Arrays.equals(b1[l1][c1[1]],b2[l2][c2[1]])) {
+								System.out.println("eq"+l2);
+								for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(t[j].getData()[l1]);
+								((SimpleTable) table[c2[0]]).addLine(b2[l2]);
+							}
+					}
+					break;
+				case LEFT:
+					for(int l1 = 1; l1< b1.length;l1++){
+						add = false;
+						for(int l2 = 1; l2<b2.length;l2++)
+							if(Arrays.equals(b1[l1][c1[1]],b2[l2][c2[1]])) {
+								add = true;
+								for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(t[j].getData()[l1]);
+								((SimpleTable) table[c2[0]]).addLine(b2[l2]);
+							}
+						if(!add){
+							for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(t[j].getData()[l1]);
+							((SimpleTable) table[c2[0]]).addLine(new byte[t[c2[0]].getData()[0].length][0]);
+						}
+					}
+					break;
+				case RIGHT:
+					add2 = new boolean[t[c2[0]].getData().length];
+					for(int l1 = 1; l1< b1.length;l1++)
+						for(int l2 = 1; l2<b2.length;l2++)
+							if(Arrays.equals(b1[l1][c1[1]],b2[l2][c2[1]])) {
+								add2[l2]=true;
+								for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(t[j].getData()[l1]);
+								((SimpleTable) table[c2[0]]).addLine(b2[l2]);
+							}
+					for(int l2 = 1;l2 < add2.length;l2++)if(!add2[l2]){
+						for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(new byte[t[j].getData()[0].length][0]);
+						((SimpleTable) table[c2[0]]).addLine(b2[l2]);
+					}
+					break;
+				case FULL:
+					add2 = new boolean[t[c2[0]].getData().length];
+					for(int l1 = 1; l1< b1.length;l1++){
+						add = false;
+						for(int l2 = 1; l2<b2.length;l2++)
+							if(Arrays.equals(b1[l1][c1[1]],b2[l2][c2[1]])) {
+								add = true;
+								add2[l2]=true;
+								for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(t[j].getData()[l1]);
+								((SimpleTable) table[c2[0]]).addLine(b2[l2]);
+							}
+						if(!add){
+							for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(t[j].getData()[l1]);
+							((SimpleTable) table[c2[0]]).addLine(new byte[t[c2[0]].getData()[0].length][0]);
+						}
+					}
+					for(int l2 = 1;l2 < add2.length;l2++)if(!add2[l2]){
+						for (int j = 0; j <= i; j++) ((SimpleTable) table[j]).addLine(new byte[t[j].getData()[0].length][0]);
+						((SimpleTable) table[c2[0]]).addLine(b2[l2]);
+					}
+			}
+		}
+		return table;
+	}
+
+	private static void forRow(ArrayList<Condition> conditions, byte[][][] table, Consumer<byte[][]> forRow)throws InvalidColumnException{
 		boolean is;
 		for (int i = 1; i < table.length; i++) {
 			is = true;

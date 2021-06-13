@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import xyz.dc_stats.extension.Extensions;
 import xyz.dc_stats.logger.Logger;
 import xyz.dc_stats.utils.iteration.ArrayUtils;
 
 public class CommandManager {
-	
 	ArrayList<Command> list = new ArrayList<>();
 	
 	public CommandManager() {

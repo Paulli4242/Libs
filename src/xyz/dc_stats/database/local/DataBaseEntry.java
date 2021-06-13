@@ -5,7 +5,7 @@ import xyz.dc_stats.utils.iteration.ArrayUtils;
 import java.io.File;
 import java.util.Arrays;
 
-public class DataBaseEntry{
+public class DataBaseEntry implements Table{
 
 
 	public DataBaseEntry(String name) {

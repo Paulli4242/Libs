@@ -26,5 +26,7 @@ public class DBResult {
         return data;
     }
 
-
+    public String[] getColumns() {
+        return columns;
+    }
 }

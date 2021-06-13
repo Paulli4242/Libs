@@ -1,8 +1,9 @@
 package xyz.dc_stats.database.statements;
 
+import xyz.dc_stats.database.comparison.Comparator;
 import xyz.dc_stats.utils.io.ByteConvertable;
 
-public class WhereStatement<T> {
+public class WhereStatement<T> implements AfterJoinableStatement<T>,AfterWhereEndStatement<T> {
 
     private WhereEndStatement<T> next;
     private ProcessableStatement<T> start;
@@ -11,6 +12,7 @@ public class WhereStatement<T> {
     private ByteConvertable[] data;
     private String column;
     private Method method;
+    private Comparator comparator;
     
     WhereStatement(ProcessableStatement<T> start, boolean and){
         this.start = start;
@@ -29,36 +31,54 @@ public class WhereStatement<T> {
         return (next = new WhereEndStatement(start));
     }
 
-    public WhereEndStatement<T> less(String column, ByteConvertable data) {
+    public WhereEndStatement<T> less(String column, ByteConvertable data, Comparator comparator) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
         method = Method.LESS;
+        this.comparator = comparator;
         return (next = new WhereEndStatement(start));
     }
+    public WhereEndStatement<T> less(String column, ByteConvertable data){
+        return less(column, data,Comparator.INTEGER);
+    }
 
-    public WhereEndStatement<T> greater(String column, ByteConvertable data) {
+
+
+    public WhereEndStatement<T> greater(String column, ByteConvertable data, Comparator comparator) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
         method = Method.GREATER;
+        this.comparator = comparator;
         return (next = new WhereEndStatement(start));
+    }
+    public WhereEndStatement<T> greater(String column, ByteConvertable data){
+        return greater(column, data,Comparator.INTEGER);
     }
 
 
-    public WhereEndStatement<T> lessOrEqual(String column, ByteConvertable data) {
+    public WhereEndStatement<T> lessOrEqual(String column, ByteConvertable data, Comparator comparator) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
         method = Method.LESS_OR_EQUAL;
+        this.comparator = comparator;
         return (next = new WhereEndStatement(start));
     }
 
+    public WhereEndStatement<T> lessOrEqual(String column, ByteConvertable data){
+        return lessOrEqual(column, data,Comparator.INTEGER);
+    }
 
-    public WhereEndStatement<T> greaterOrEqual(String column, ByteConvertable data) {
+    public WhereEndStatement<T> greaterOrEqual(String column, ByteConvertable data, Comparator comparator) {
         this.column = column;
         this.data = new ByteConvertable[]{data};
         method = Method.GREATER_OR_EQUAL;
+        this.comparator = comparator;
         return (next = new WhereEndStatement(start));
     }
 
+    public WhereEndStatement<T> greaterOrEqual(String column, ByteConvertable data){
+        return greaterOrEqual(column, data,Comparator.INTEGER);
+    }
 
     public WhereEndStatement<T> notEqual(String column, ByteConvertable data) {
         this.column = column;
@@ -68,12 +88,17 @@ public class WhereStatement<T> {
     }
 
 
-    public WhereEndStatement<T> between(String column, ByteConvertable data0, ByteConvertable data1) {
+    public WhereEndStatement<T> between(String column, ByteConvertable data0, ByteConvertable data1,Comparator comparator) {
         this.column = column;
         this.data = new ByteConvertable[]{data0,data1};
         method = Method.BETWEEN;
+        this.comparator = comparator;
         return (next = new WhereEndStatement(start));
     }
+    public WhereEndStatement<T> between(String column, ByteConvertable data0, ByteConvertable data1){
+        return between(column, data0, data1,Comparator.INTEGER);
+    }
+
 
     public WhereEndStatement<T> in(String column, ByteConvertable... data) {
         this.column = column;
@@ -100,6 +125,9 @@ public class WhereStatement<T> {
     }
     public Method getMethod() {
         return method;
+    }
+    public Comparator getComparator() {
+        return comparator;
     }
 
     public enum Method{

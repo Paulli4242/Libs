@@ -18,6 +18,6 @@ public class SimpleByteConverter<T> implements ByteConverter<T> {
 
     @Override
     public byte[] toBytes(T t) {
-        return toBytes(t);
+        return to.toBytes(t);
     }
 }

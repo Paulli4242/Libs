@@ -7,18 +7,18 @@ import java.util.concurrent.CompletableFuture;
 public class DeleteStatement implements ProcessableStatement<Void> {
 
     private DBHandler handler;
-    private FromStatement<Void> next;
+    private FromDeleteStatement<Void> next;
 
 
     public DeleteStatement(DBHandler handler){
         this.handler = handler;
     }
 
-    public FromStatement<Void> from(String table){
-        return next = new FromStatement<>(this,table);
+    public FromDeleteStatement<Void> from(String table){
+        return next = new FromDeleteStatement<>(this,table);
     }
 
-    public FromStatement<Void> next(){
+    public FromDeleteStatement<Void> next(){
         return next;
     }
     @Override

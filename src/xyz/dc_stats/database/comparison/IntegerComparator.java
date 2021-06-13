@@ -1,0 +1,95 @@
+package xyz.dc_stats.database.comparison;
+
+public class IntegerComparator implements Comparator {
+    @Override
+    public boolean less(byte[] c, byte[] data) {
+        if(c.length==0)c = new byte[]{0};
+        if(data.length==0)data = new byte[]{0};
+        int a,b,i=0;
+        if((data[0]&(byte)0x80)!=0){
+            if((c[0]&(byte)0x80)!=0){
+                for(i = 0;i<data.length&&i<c.length;i++){
+                    a=Byte.toUnsignedInt(data[i]);
+                    b=Byte.toUnsignedInt(c[i]);
+                    if(a<b)return false;
+                    else if(a>b)return true;
+                }
+                if(c.length>i){
+                    while (c.length<i){
+                        if(c[i]!=(byte)0xff)return true ;
+                        i++;
+                    }
+                }else if(data.length>i){
+                    while (data.length<i){
+                        if(data[i]!=(byte)0xff)return false;
+                        i++;
+                    }
+                }
+            }else return true;
+        }else if((c[0]&(byte)0x80)!=0) return true;
+        else{
+            int diff = data.length-c.length;
+            if(diff>0)for(i=0;i<diff;i++)if(data[i]!=0)return true;
+            else if(diff<0){
+                diff=-diff;
+                for(i=0;i<0;i++)if(c[i]!=0)return false;
+                i=0;
+            }
+            diff=-diff;
+            while(i<data.length){
+                a=Byte.toUnsignedInt(data[i]);
+                b=Byte.toUnsignedInt(c[i]);
+                if(a<b)return false;
+                else if(a>b)return true;
+                i++;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean greater(byte[] c, byte[] data) {
+        if(c.length==0)c = new byte[]{0};
+        if(data.length==0)data = new byte[]{0};
+        int a,b,i=0;
+        if((data[0]&(byte)0x80)!=0){
+            if((c[0]&(byte)0x80)!=0){
+                for(i = 0;i<data.length&&i<c.length;i++){
+                    a=Byte.toUnsignedInt(data[i]);
+                    b=Byte.toUnsignedInt(c[i]);
+                    if(a<b)return true;
+                    else if(a>b)return false;
+                }
+                if(c.length>i){
+                    while (c.length<i){
+                        if(c[i]!=(byte)0xff)return false ;
+                        i++;
+                    }
+                }else if(data.length>i){
+                    while (data.length<i){
+                        if(data[i]!=(byte)0xff)return true;
+                        i++;
+                    }
+                }
+            }else return true;
+        }else if((c[0]&(byte)0x80)!=0) return false;
+        else{
+            int diff = data.length-c.length;
+            if(diff>0)for(i=0;i<diff;i++)if(data[i]!=0)return false;
+            else if(diff<0){
+                diff=-diff;
+                for(i=0;i<0;i++)if(c[i]!=0)return true;
+                i=0;
+            }
+            diff=-diff;
+            while(i<data.length){
+                a=Byte.toUnsignedInt(data[i]);
+                b=Byte.toUnsignedInt(c[i]);
+                if(a<b)return true;
+                else if(a>b)return false;
+                i++;
+            }
+        }
+        return false;
+    }
+}

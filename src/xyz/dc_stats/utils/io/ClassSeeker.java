@@ -30,14 +30,10 @@ public class ClassSeeker {
                     e.printStackTrace();
                 }
         }
-        /*for(URL url : Launcher.getBootstrapClassPath().getURLs())if(url.getPath().endsWith(".jar")) {
-            for(String s : seekForClassPaths(url, className))
-                try {
-                    classes = ArrayUtils.addAndExpand(classes, ClassLoader.getSystemClassLoader().loadClass(s));
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-        }*/
+        try{
+            classes = ArrayUtils.addAndExpand(classes,ClassLoader.getPlatformClassLoader().loadClass(className));
+        }catch (ClassNotFoundException e){
+        }
         return classes;
     }
     public String[] seekForClassPaths(URL url, String className) {

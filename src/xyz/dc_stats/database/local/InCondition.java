@@ -6,7 +6,7 @@ import xyz.dc_stats.utils.io.ByteUtils;
 
 import java.util.Arrays;
 
-public class InCondition extends Condition{
+class InCondition extends Condition{
 
     private byte[][] data;
 

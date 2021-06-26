@@ -3,7 +3,7 @@ package xyz.dc_stats.database.local;
 import xyz.dc_stats.database.comparison.Comparator;
 import xyz.dc_stats.utils.io.ByteConvertable;
 
-public class GreaterCondition extends Condition{
+class GreaterCondition extends Condition{
 
     private byte[] data;
     private Comparator comparator;

@@ -14,15 +14,46 @@ public interface DBHandler {
 
     /**
      *
-     * Select and retrieves columns from a database.
+     * Creates a new SelectStatement.
      *
-     * @param columns to retrieve retrieved
-     * @return Se
+     * @param columns to retrieve
+     * @return a SelectStatement
      */
     SelectStatement select(String ... columns);
+
+    /**
+     *
+     * Creates a new CreateStatement.
+     *
+     * @return a CreateStatement
+     */
     CreateStatement create();
+
+    /**
+     *
+     * Creates a new InsertStatement.
+     *
+     * @return a InsertStatement
+     */
     InsertStatement insert();
+
+    /**
+     *
+     * Creates a new UpdateStatement
+     *
+     * @param table - name of the table.
+     * @param columns to update.
+     * @return a UpdateStatement
+     */
     UpdateStatement update(String table, String... columns);
+
+    /**
+     *
+     * Creates a new DeleteStatement
+     *
+     *
+     * @return a DeleteStatement
+     */
     DeleteStatement delete();
 
     CompletableFuture<DBResult> process(SelectStatement select);
@@ -30,6 +61,7 @@ public interface DBHandler {
     CompletableFuture<Void> process(InsertStatement insert);
     CompletableFuture<Void> process(UpdateStatement update);
     CompletableFuture<Void> process(DeleteStatement delete);
+
 
 
 }

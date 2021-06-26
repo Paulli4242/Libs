@@ -4,6 +4,11 @@ import xyz.dc_stats.database.DBHandler;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ *
+ * Class CreateTableStatement describes a TABLE statement after a CREATE statement
+ *
+ */
 public class CreateTableStatement {
     String[] columns;
     String name;
@@ -14,13 +19,33 @@ public class CreateTableStatement {
         this.start = start;
         this.name = name;
     }
+
+    /**
+     *
+     * Gets the name of the table
+     *
+     * @return name of the table
+     */
     public String getName() {
         return name;
     }
+
+    /**
+     *
+     * Gets the names of the columns
+     *
+     * @return the names of the columns
+     */
     public String[] getColumns() {
         return columns;
     }
 
+    /**
+     *
+     * Processes the CreateTableStatement
+     *
+     * @return
+     */
     public CompletableFuture<Void> process(){
         return start.process(this);
     }

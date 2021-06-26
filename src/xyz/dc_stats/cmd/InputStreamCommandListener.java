@@ -7,30 +7,48 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class InputStreamCommandListener implements CommandSender, Runnable{
-	protected Thread t;
+/**
+ *
+ * Class InputStreamCommandListener is a Thread which listens to a InputStream for commands.
+ *
+ */
+public class InputStreamCommandListener extends Thread implements CommandSender{
 	protected CommandManager manager;
 	protected InputStream in;
 	protected PrintStream out;
 	private boolean isRunning;
-	
+
+	/**
+	 *
+	 * Creates InputStreamCommandListener
+	 *
+	 * @param manager CommandManager
+	 * @param in InputStream of the command source.
+	 *
+	 */
 	public InputStreamCommandListener(CommandManager manager, InputStream in) {
 		this.in = in;
 		this.manager = manager;
 		isRunning = true;
-		t = new Thread(this,"InputStreamListener");
-		t.setDaemon(true);
-		t.start();
+		start();
 	}
+
+	/**
+	 *
+	 * Creates InputStreamCommandListener
+	 *
+	 * @param manager CommandManager
+	 * @param in InputStream of the command sender.
+	 * @param out OutputStream to answer the command sender
+	 */
 	public InputStreamCommandListener(CommandManager manager, InputStream in, OutputStream out) {
+		super("InputStreamListener");
 		this.in = in;
 		if(out instanceof PrintStream)this.out = (PrintStream) out;
 		else this.out = new PrintStream(out);
 		this.manager = manager;
 		isRunning = true;
-		t = new Thread(this,"InputStreamListener");
-		t.setDaemon(true);
-		t.start();
+		start();
 	}
 	
 	@Override
@@ -42,7 +60,7 @@ public class InputStreamCommandListener implements CommandSender, Runnable{
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		while(isRunning) {
 			try {
-				if(!manager.onCommandRecived(this, reader.readLine().split(" ")))sendMessage("Command not found");
+				if(!manager.onCommandReceived(this, reader.readLine().split(" ")))sendMessage("Command not found");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

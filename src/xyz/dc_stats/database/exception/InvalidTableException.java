@@ -1,5 +1,10 @@
 package xyz.dc_stats.database.exception;
 
+/**
+ *
+ * Exception thrown when a Table is invalid or already created.
+ *
+ */
 public class InvalidTableException extends Exception {
     public InvalidTableException() {
         super();

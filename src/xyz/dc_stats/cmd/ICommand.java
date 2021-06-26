@@ -1,6 +1,22 @@
 package xyz.dc_stats.cmd;
 
+/**
+ *
+ * Interface ICommand represents a Command
+ *
+ */
 public interface ICommand {
-	public String getName();
-	public String[] getAlias();
+
+	/**
+	 *
+	 * Gets the name of the command.
+	 *
+	 * @return the name of the command.
+	 */
+	String getName();
+	default String[] getAlias(){
+		return new String[0];
+	}
+	void executeCommand(CommandSender sender, String[] args);
+
 }

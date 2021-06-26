@@ -1,6 +1,12 @@
 package xyz.dc_stats.database.exception;
 
+/**
+ *
+ * Exception thrown when there is a invalid column.
+ *
+ */
 public class InvalidColumnException extends Exception {
+
     public InvalidColumnException() {
         super();
     }

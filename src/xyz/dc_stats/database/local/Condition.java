@@ -1,6 +1,6 @@
 package xyz.dc_stats.database.local;
 
-public abstract class Condition {
+abstract class Condition {
 
     private boolean and;
     private boolean not;

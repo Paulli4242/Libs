@@ -5,7 +5,7 @@ import xyz.dc_stats.utils.io.ByteConvertable;
 
 import java.util.Arrays;
 
-public class GreaterEqualCondition extends Condition{
+class GreaterEqualCondition extends Condition{
 
     private byte[] data;
     private Comparator comparator;

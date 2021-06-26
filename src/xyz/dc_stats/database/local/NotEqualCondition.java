@@ -4,7 +4,7 @@ import xyz.dc_stats.utils.io.ByteConvertable;
 
 import java.util.Arrays;
 
-public class NotEqualCondition extends Condition {
+class NotEqualCondition extends Condition {
 
     byte[] data;
 

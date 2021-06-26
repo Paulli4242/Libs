@@ -18,15 +18,34 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+/**
+ *
+ * Class LDataBase is a build in database.
+ *
+ */
 public class LDataBase implements Savable, DBHandler {
 	private File dataFolder;
 	private ArrayList<DataBaseEntry> entrys = new ArrayList<>();
+
+	/**
+	 *
+	 * Creates a LDataBase with a specific data folder
+	 *
+	 * @param dataFolder
+	 */
 	public LDataBase(File dataFolder) {
 		this.dataFolder = dataFolder;
 	}
 	public LDataBase() {
 		this(new File("data"));
 	}
+
+	/**
+	 *
+	 * Creates a LDataBase
+	 *
+	 * @param dataFolder
+	 */
 	public boolean isRegistered(String entry) {
 		for(DataBaseEntry t : entrys)if(t.getName().equalsIgnoreCase(entry))return true;
 		return new File(dataFolder,entry+".dat").exists();
@@ -49,6 +68,12 @@ public class LDataBase implements Savable, DBHandler {
 		}
 		return null;
 	}
+
+	/**
+	 *
+	 * Saves all date in this LDataBase.
+	 *
+	 */
 	public void save() {
 		for(DataBaseEntry e : entrys)save(e);
 	}
@@ -76,6 +101,7 @@ public class LDataBase implements Savable, DBHandler {
 		}
 		dbe.setData(data);
 	}
+
 	@Override
 	public SelectStatement select(String ... columns) {
 		return new SelectStatement(this,columns);

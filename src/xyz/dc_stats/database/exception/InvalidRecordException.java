@@ -1,5 +1,10 @@
 package xyz.dc_stats.database.exception;
 
+/**
+ *
+ * Exception thrown when a record is invalid.
+ *
+ */
 public class InvalidRecordException extends Exception{
     public InvalidRecordException() {
         super();

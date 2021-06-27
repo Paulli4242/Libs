@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  *
- * Class FromStatement describes a FROM statement.
+ * Class FromStatement represents a FROM statement.
  *
  * @param <T>
  */

@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  *
- * Class InsertStatement describes a INSERT statement
+ * Class InsertStatement represents a INSERT statement
  *
  */
 public class InsertStatement {

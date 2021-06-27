@@ -2,7 +2,7 @@ package xyz.dc_stats.database.statements;
 
 /**
  *
- * Interface JoinableStatement describes a statement after witch can follow a JOIN statement.
+ * Interface JoinableStatement represents a statement after witch can follow a JOIN statement.
  *
  * @param <T>
  */

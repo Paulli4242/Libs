@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  *
- * Class JoinStatement describes a JOIN statement
+ * Class JoinStatement represents a JOIN statement
  *
  * @param <T>
  */

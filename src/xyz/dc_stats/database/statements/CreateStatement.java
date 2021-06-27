@@ -4,7 +4,7 @@ import xyz.dc_stats.database.DBHandler;
 
 /**
  *
- * Class witch describes a CREATE statement
+ * Class witch represents a CREATE statement
  *
  */
 public class CreateStatement {

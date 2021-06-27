@@ -2,7 +2,7 @@ package xyz.dc_stats.database.statements;
 
 /**
  *
- * Interface witch comes after a JoinableStatement.
+ * Interface AfterJoinableStatement comes after a JoinableStatement.
  *
  * @param <T>
  */

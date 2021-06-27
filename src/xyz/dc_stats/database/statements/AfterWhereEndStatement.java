@@ -2,7 +2,7 @@ package xyz.dc_stats.database.statements;
 
 /**
  *
- * Interface witch comes after a WhereEndStatement
+ * Interface AfterWhereEndStatement comes after a WhereEndStatement
  *
  * @param <T>
  */

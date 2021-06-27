@@ -2,7 +2,7 @@ package xyz.dc_stats.database.statements;
 
 /**
  *
- * Class FromDeleteStatement describes a FROM statement after a DELETE statement.
+ * Class FromDeleteStatement represents a FROM statement after a DELETE statement.
  *
  * @param <T>
  */

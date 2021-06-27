@@ -2,6 +2,11 @@ package xyz.dc_stats.database.statements;
 
 import xyz.dc_stats.utils.io.ByteConvertable;
 
+/**
+ *
+ * Class SetStatement represents a SET statement.
+ *
+ */
 public class SetStatement {
 
     private ByteConvertable[] data;
@@ -13,13 +18,31 @@ public class SetStatement {
         this.start = start;
     }
 
+    /**
+     *
+     * Gets the Data to set.
+     *
+     * @return the Data to set
+     */
     public ByteConvertable[] getData() {
         return data;
     }
 
+    /**
+     *
+     * Gets the next statement
+     *
+     */
     public WhereStatement<Void> next(){
         return next;
     }
+
+    /**
+     *
+     * Adds a new WHERE statement.
+     *
+     * @return
+     */
     public WhereStatement<Void> where() {
         return (next = new WhereStatement(start,true));
     }

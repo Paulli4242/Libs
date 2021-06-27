@@ -4,7 +4,7 @@ import xyz.dc_stats.utils.io.ByteConvertable;
 
 /**
  *
- * Class IntoStatement describes a INTO statement
+ * Class IntoStatement represents a INTO statement
  *
  */
 public class IntoStatement {

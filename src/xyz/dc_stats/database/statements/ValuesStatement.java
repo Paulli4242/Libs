@@ -4,6 +4,11 @@ import xyz.dc_stats.utils.io.ByteConvertable;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ *
+ * Class ValuesStatement represents a VALUES statement
+ *
+ */
 public class ValuesStatement {
 
     private ByteConvertable[][] values;
@@ -13,6 +18,12 @@ public class ValuesStatement {
         this.values = values;
         this.start = start;
     }
+
+    /**
+     *
+     * Gets the values.
+     *
+     */
     public ByteConvertable[][] getValues() {
         return values;
     }

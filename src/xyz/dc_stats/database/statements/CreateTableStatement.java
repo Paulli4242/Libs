@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  *
- * Class CreateTableStatement describes a TABLE statement after a CREATE statement
+ * Class CreateTableStatement represents a TABLE statement after a CREATE statement
  *
  */
 public class CreateTableStatement {

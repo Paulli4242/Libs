@@ -1,9 +1,10 @@
 package xyz.dc_stats.utils.exceptions;
 
 import java.lang.reflect.Constructor;
+import java.util.function.Supplier;
 
 @FunctionalInterface
-public interface ExceptionalGetter<T> {
+public interface ExceptionalSupplier<T> {
     public T get()throws Exception;
     default T ignoreException(){
         try{

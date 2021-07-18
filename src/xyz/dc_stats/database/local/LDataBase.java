@@ -36,24 +36,23 @@ public class LDataBase implements Savable, DBHandler {
 	public LDataBase(File dataFolder) {
 		this.dataFolder = dataFolder;
 	}
-	public LDataBase() {
-		this(new File("data"));
-	}
-
 	/**
 	 *
 	 * Creates a LDataBase
 	 *
-	 * @param dataFolder
 	 */
+	public LDataBase() {
+		this(new File("data"));
+	}
+
 	public boolean isRegistered(String entry) {
 		for(DataBaseEntry t : entrys)if(t.getName().equalsIgnoreCase(entry))return true;
 		return new File(dataFolder,entry+".dat").exists();
 	}
-	void createTable(String table,String[] columns) throws InvalidTableException {
+	void createTable(String table, String[] columns) throws InvalidTableException {
 		if(isRegistered(table)) throw new InvalidTableException("Table already exist.");
 		DataBaseEntry dbe;
-		entrys.add((dbe =new DataBaseEntry(table.toLowerCase())));
+		entrys.add((dbe = new DataBaseEntry(table.toLowerCase())));
 		byte[][][] data = new byte[1][columns.length][];
 		for(int i = 0;i<columns.length;i++)data[0][i]=ByteUtils.stringToBytes(columns[i]);
 		dbe.setData(data);
@@ -285,11 +284,11 @@ public class LDataBase implements Savable, DBHandler {
 		if(out==null)throw new InvalidColumnException(s);
 		return out;
 	}
-	private static int[] getColumns(String[] s, byte[][] b)throws InvalidColumnException {
+	private static int[] getColumns(CharSequence[] s, byte[][] b)throws InvalidColumnException {
 		int[] result = new int[s.length];
 		for(int i = 0;i<s.length;i++) {
-			int c = getColumn(s[i],b);
-			if(c==-1)throw new InvalidColumnException(s[i]);
+			int c = getColumn(s[i].toString(),b);
+			if(c==-1)throw new InvalidColumnException(s[i].toString());
 				result[i]=c;
 		}
 		return result;

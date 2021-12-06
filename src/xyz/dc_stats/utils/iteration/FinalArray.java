@@ -1,5 +1,6 @@
 package xyz.dc_stats.utils.iteration;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class FinalArray<T> implements Iterable<T>{
@@ -20,5 +21,12 @@ public class FinalArray<T> implements Iterable<T>{
     @Override
     public Iterator<T> iterator() {
         return new ArrayIterator<>(array);
+    }
+
+    @Override
+    public String toString() {
+        return "FinalArray{" +
+                "array=" + ArrayUtils.toString(array) +
+                '}';
     }
 }

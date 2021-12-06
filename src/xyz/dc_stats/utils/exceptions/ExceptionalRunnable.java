@@ -33,4 +33,11 @@ public interface ExceptionalRunnable {
             throw e;
         }
     }
+    default void printStackTrace(){
+        try{
+            run();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

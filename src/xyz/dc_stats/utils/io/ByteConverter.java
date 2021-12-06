@@ -1,5 +1,7 @@
 package xyz.dc_stats.utils.io;
 
+import java.awt.*;
+
 public interface ByteConverter<T> extends FromByteConverter<T>,ToByteConverter<T> {
     ByteConverter<Byte> BYTE = ByteConverter.from(b->b[0],d->new byte[]{d});
     ByteConverter<Short> SHORT = ByteConverter.from(ByteUtils::bytesToShort, ByteUtils::numberToBytes);
@@ -10,6 +12,7 @@ public interface ByteConverter<T> extends FromByteConverter<T>,ToByteConverter<T
     ByteConverter<Character> CHAR = ByteConverter.from(ByteUtils::bytesToChar, ByteUtils::charToBytes);
     ByteConverter<Boolean> BOOLEAN = ByteConverter.from(ByteUtils::bytesToBoolean, ByteUtils::boolToBytes);
     ByteConverter<String> STRING = ByteConverter.from(ByteUtils::bytesToString, ByteUtils::stringToBytes);
+    ByteConverter<Color> COLOR = ByteConverter.from(b->new Color(ByteUtils.bytesToInt(b)),c->ByteUtils.numberToBytes(c.getRGB()));
     static <T> ByteConverter<T> from(FromByteConverter<T> from, ToByteConverter<T> to){
         return new SimpleByteConverter<>(from,to);
     }

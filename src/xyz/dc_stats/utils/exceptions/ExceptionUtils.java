@@ -26,4 +26,14 @@ public final class ExceptionUtils {
     public static void runAsRE(ExceptionalRunnable run,Class<?extends RuntimeException> ex){
         run.asRuntimeException(ex);
     }
+    public static <T> T getPS(ExceptionalGetter<T> getter){
+        return getter.printStackTrace();
+    }
+    public static <T> T getPS(ExceptionalGetter<T> getter, T def){
+        T  t = getter.printStackTrace();
+        return t==null?def:t;
+    }
+    public static void runPS(ExceptionalRunnable run){
+        run.printStackTrace();
+    }
 }

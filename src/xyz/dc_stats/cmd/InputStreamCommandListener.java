@@ -1,18 +1,13 @@
 package xyz.dc_stats.cmd;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  *
  * Class InputStreamCommandListener is a Thread which listens to a InputStream for commands.
  *
  */
-public class InputStreamCommandListener extends Thread implements CommandSender{
+public class InputStreamCommandListener extends Thread implements CommandSender, Closeable {
 	protected CommandManager manager;
 	protected InputStream in;
 	protected PrintStream out;
@@ -70,5 +65,10 @@ public class InputStreamCommandListener extends Thread implements CommandSender{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		isRunning = false;
 	}
 }

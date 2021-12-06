@@ -34,4 +34,12 @@ public interface ExceptionalGetter<T> {
             throw e;
         }
     }
+    default T printStackTrace(){
+        try{
+            return get();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

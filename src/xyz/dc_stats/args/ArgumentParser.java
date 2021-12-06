@@ -1,6 +1,10 @@
 package xyz.dc_stats.args;
 
 import java.util.Arrays;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 /**
  *
@@ -80,6 +84,18 @@ public class ArgumentParser {
 	}
 	/**
 	 *
+	 * Gets a string from a matching key or a default value.
+	 *
+	 * @param key the key where it gets the string.
+	 * @param def the default value returned if key does not exist.
+	 * @return a string from a matching key, def if the key does not exist.
+	 */
+	public String getString(String key, Supplier<String> def){
+		String s = getString(key);
+		return s==null?def.get():s;
+	}
+	/**
+	 *
 	 * Gets a string array from a matching key.
 	 *
 	 * @param key the key where it gets the string array.
@@ -101,6 +117,18 @@ public class ArgumentParser {
 	public String[] getStringArray(String key, String...def) {
 		String[] s = getStringArray(key);
 		return s==null?def:s;
+	}
+	/**
+	 *
+	 * Gets a string array from a matching key or a default value.
+	 *
+	 * @param key the key where it gets the string array.
+	 * @param def the default value returned if key does not exist.
+	 * @return a string array from a matching key, def if the key does not exist.
+	 */
+	public String[] getStringArray(String key, Supplier<String[]> def) {
+		String[] s = getStringArray(key);
+		return s==null?def.get():s;
 	}
 	/**
 	 *
@@ -126,6 +154,18 @@ public class ArgumentParser {
 	}
 	/**
 	 *
+	 * Gets a double from a matching key or a default value.
+	 *
+	 * @param key the key where it gets the string.
+	 * @param def the default value returned if key does not exist.
+	 * @return a double from a matching key, def if the key does not exist.
+	 */
+	public double getDouble(String key, DoubleSupplier def) {
+		String s = getString(key);
+		return s==null?def.getAsDouble():Double.parseDouble(s);
+	}
+	/**
+	 *
 	 * Gets a int from a matching key.
 	 *
 	 * @param key the key where it gets the int.
@@ -145,6 +185,18 @@ public class ArgumentParser {
 	public int getInt(String key,int def) {
 		String s = getString(key);
 		return s==null?def:Integer.parseInt(s);
+	}
+	/**
+	 *
+	 * Gets a int from a matching key or a default value.
+	 *
+	 * @param key the key where it gets the string.
+	 * @param def the default value returned if key does not exist.
+	 * @return a int from a matching key, def if the key does not exist.
+	 */
+	public int getInt(String key, IntSupplier def) {
+		String s = getString(key);
+		return s==null?def.getAsInt():Integer.parseInt(s);
 	}
 	/**
 	 *
@@ -168,6 +220,19 @@ public class ArgumentParser {
 	public long getLong(String key,long def) {
 		String s = getString(key);
 		return s==null?def:Long.parseLong(s);
+	}
+	/**
+	 *
+	 * Gets a long from a matching key or a default value.
+	 *
+	 * @param key the key where it gets the long.
+	 * @param def the default value returned if key does not exist.
+	 * @return a long from a matching key, def if the key does not exist.
+	 *
+	 */
+	public long getLong(String key, LongSupplier def) {
+		String s = getString(key);
+		return s==null?def.getAsLong():Long.parseLong(s);
 	}
 	private class Node{
 		

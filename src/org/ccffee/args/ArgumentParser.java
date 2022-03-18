@@ -1,10 +1,7 @@
 package org.ccffee.args;
 
 import java.util.Arrays;
-import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
-import java.util.function.LongSupplier;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  *
@@ -25,8 +22,8 @@ public class ArgumentParser {
 		String current = "";
 		Node currentV;
 		for(String s : args) {
-			if(s.startsWith("--")) {
-				current = s.substring(2).toLowerCase();
+			if(s.startsWith("-")) {
+				current = s.substring(1).toLowerCase();
 				if(!isKey(current)) {
 					nodes = Arrays.copyOfRange(nodes, 0, nodes.length+1);
 					nodes[nodes.length-1]=new Node(current);
@@ -68,7 +65,6 @@ public class ArgumentParser {
 	public String getString(String key){
 		String[] s = getStringArray(key);
 		return s==null?null:s[0];
-		
 	}
 	/**
 	 *
@@ -251,5 +247,19 @@ public class ArgumentParser {
 		public String getKey() {
 			return key;
 		}
+	}
+
+	public <T> T getFirst(String[] keys, Function<String,T> get){
+		T current = null;
+		for(String k : keys)if((current = get.apply(k))!=null)break;
+		return current;
+	}
+	public <T> T getFirst(String[] keys, Function<String,T> get, T def) {
+		T current = getFirst(keys,get);
+		return current==null?def:current;
+	}
+	public <T> T getFirst(String[] keys, Function<String,T> get, Supplier<T> def) {
+		T current = getFirst(keys,get);
+		return current==null?def.get():current;
 	}
 }
